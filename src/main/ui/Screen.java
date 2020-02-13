@@ -64,8 +64,22 @@ public class Screen {
     }
 
     public void showAccounts() {
+
+        System.out.println("---------ChaChing: View Accounts --------");
+
         for (Account account: this.accounts) {
             System.out.println(account.toString());
         }
+    }
+
+    public void addTransaction() {
+        System.out.println("************ChaChing: Add Transaction ******");
+        for (int i = 0; i < this.accounts.size(); i += 1) {
+            System.out.println(String.format("%d. %s", i + 1, this.accounts.get(i)));
+
+        }
+        System.out.println("Please choose an account:");
+
+
     }
 }
