@@ -5,49 +5,43 @@ import java.util.Arrays;
 import java.util.Date;
 
 public class Transaction {
-    enum TransactionType {
+    public enum TransactionType {
         EXPENSE,
         INCOME
     }
 
     private TransactionType type;
-    private ArrayList<String> tags;
+    private String tag;
     private double amount;
-    private Date date;
 
-    public Transaction(double amount, TransactionType type, ArrayList<String> tags, Date date) {
-        this.date = date;
+    public Transaction(double amount, TransactionType type, String tag) {
         this.amount = amount;
         this.type = type;
-        this.tags = tags;
+        this.tag = tag;
     }
 
     public double getAmount() {
-        return this.type == TransactionType.INCOME ? this.amount : - this.amount;
-    }
-
-    public Date getDate() {
-        return this.date;
+        return this.type==TransactionType.INCOME?this.amount:-this.amount;
     }
 
     public double getNetAmount() {
         return this.amount;
     }
 
-    public ArrayList<String> getTags() {
-        return this.tags;
+    public String getTag() {
+        return this.tag;
     }
 
     public void setAmount(double amount) {
         this.amount = amount;
     }
 
-    public void setTags(ArrayList<String> tags) {
-        this.tags = tags;
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 
     public String toString() {
-        return String.format("");
+        return String.format("%s: %f\n",this.getTag(), this.getNetAmount());
     }
 
 }

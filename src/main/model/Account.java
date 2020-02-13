@@ -2,7 +2,7 @@ package model;
 
 import java.util.ArrayList;
 
-public class  Account {
+public class Account {
     public String description;
     private ArrayList<Transaction> transactions;
     private double budget;
@@ -18,31 +18,29 @@ public class  Account {
     }
 
     public double getSurplus() {
-        return this.budget + getTotalByTransactionType(Transaction.TransactionType.EXPENSE);
+        return this.budget + getTotalByTransactionType(Transaction.TransactionType.EXPENSE) + getTotalByTransactionType(Transaction.TransactionType.INCOME);
     }
 
     public void addTransaction(Transaction transaction) {
         this.transactions.add(transaction);
     }
 
-    public void updateTransaction(int index, double amount, ArrayList<String> tags) {
+    public void updateTransaction(int index, double amount, String tag) {
         Transaction transaction = this.transactions.get(index);
         transaction.setAmount(amount);
-        transaction.setTags(tags);
+        transaction.setTag(tag);
     }
 
     public void removeTransaction(int index) {
         this.transactions.remove(index);
     }
 
-    public double getTransactionsByTags(String[] tags) {
+    public double getTransactionsByTags(String tag) {
         double amount = 0;
         for (Transaction transaction: this.transactions) {
-            for (String tag: tags) {
-                if (transaction.getTags().contains(tag)) {
-                    amount += transaction.getAmount();
-                    break;
-                }
+            if (transaction.getTag().equals(tag)) {
+                amount += transaction.getAmount();
+                break;
             }
         }
         return amount;
@@ -62,5 +60,23 @@ public class  Account {
             }
         }
         return total;
+    }
+
+    public String toString() {
+        String title = "===== Account Summary =====\n";
+        String income = "***** INCOME *****\n";
+        for (Transaction transaction: this.transactions) {
+            if (transaction.getAmount() > 0) {
+                income = income.concat(transaction.toString());
+            }
+        }
+        String expense = "***** EXPENSE *****\n";
+        for (Transaction transaction: this.transactions) {
+            if (transaction.getAmount() < 0) {
+                expense = expense.concat(transaction.toString());
+            }
+        }
+        String budget = String.format("* Budget: %f *\n", this.budget);
+        return title.concat(budget).concat(income).concat(expense);
     }
 }

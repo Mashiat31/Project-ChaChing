@@ -1,37 +1,40 @@
 package ui;
 
 import model.Account;
+import model.Transaction;
 
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Screen {
+public class ChaChing {
     private ArrayList<Account> accounts;
 
     public static void main(String[] args) {
-        Screen app = new Screen();
+        ChaChing app = new ChaChing();
         Scanner menuChoice = new Scanner(System.in);
         boolean exit = false;
         while (!exit) {
-            Screen.displayMenu();
+            ChaChing.displayMenu();
             switch (menuChoice.nextInt()) {
                 case 1:
                     app.createAccount();
                     break;
                 case 2:
+                    app.showAccounts();
                     break;
                 case 3:
+                    app.addTransaction();
                     break;
                 case 4:
                     exit = true;
                     break;
                 default:
-                    Screen.displayMenu();
+                    ChaChing.displayMenu();
             }
         }
     }
 
-    public Screen() {
+    public ChaChing() {
         this.accounts = new ArrayList<Account>();
     }
 
@@ -64,22 +67,35 @@ public class Screen {
     }
 
     public void showAccounts() {
-
-        System.out.println("---------ChaChing: View Accounts --------");
-
+        System.out.println("===== ChaChing: View accounts ====");
         for (Account account: this.accounts) {
             System.out.println(account.toString());
         }
+        System.out.println(">>>>> Returning to main menu <<<<<");
     }
 
     public void addTransaction() {
-        System.out.println("************ChaChing: Add Transaction ******");
-        for (int i = 0; i < this.accounts.size(); i += 1) {
-            System.out.println(String.format("%d. %s", i + 1, this.accounts.get(i)));
-
+        Scanner prompt = new Scanner(System.in);
+        System.out.println("===== ChaChing: Add Transaction ====");
+        for (int i = 0; i < this.accounts.size(); i+=1) {
+            System.out.println(String.format("%d. %s", i+1, this.accounts.get(i)));
         }
-        System.out.println("Please choose an account:");
-
-
+        System.out.println("> Please choose an account:");
+        int accountIndex = prompt.nextInt();
+        Account targetAccount = this.accounts.get(accountIndex-1);
+        System.out.println("> Account selected");
+        System.out.println("> Is your transaction an income or expense ?");
+        System.out.println("1. Income");
+        System.out.println("2. Expense");
+        Transaction.TransactionType type = prompt.nextInt() == 1 ? Transaction.TransactionType.INCOME :
+                Transaction.TransactionType.EXPENSE;
+        System.out.println("> Please enter the amount:");
+        double amount = prompt.nextDouble();
+        System.out.println("> Please tag(s) your transaction:");
+        String tag = prompt.nextLine();
+        Transaction transaction = new Transaction(amount, type, tag);
+        targetAccount.addTransaction(transaction);
+        System.out.println("***** Transaction recorded successfully *****");
+        System.out.println(">>>>> Returning to main menu <<<<<");
     }
 }
