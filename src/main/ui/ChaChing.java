@@ -77,12 +77,12 @@ public class ChaChing {
     public void addTransaction() {
         Scanner prompt = new Scanner(System.in);
         System.out.println("===== ChaChing: Add Transaction ====");
-        for (int i = 0; i < this.accounts.size(); i+=1) {
-            System.out.println(String.format("%d. %s", i+1, this.accounts.get(i)));
+        for (int i = 0; i < this.accounts.size(); i += 1) {
+            System.out.println(String.format("%d. %s", i + 1, this.accounts.get(i)));
         }
         System.out.println("> Please choose an account:");
         int accountIndex = prompt.nextInt();
-        Account targetAccount = this.accounts.get(accountIndex-1);
+        Account targetAccount = this.accounts.get(accountIndex - 1);
         System.out.println("> Account selected");
         System.out.println("> Is your transaction an income or expense ?");
         System.out.println("1. Income");

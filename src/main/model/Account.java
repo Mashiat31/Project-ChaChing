@@ -18,7 +18,8 @@ public class Account {
     }
 
     public double getSurplus() {
-        return this.budget + getTotalByTransactionType(Transaction.TransactionType.EXPENSE) + getTotalByTransactionType(Transaction.TransactionType.INCOME);
+        return this.budget + getTotalByTransactionType(Transaction.TransactionType.EXPENSE)
+                + getTotalByTransactionType(Transaction.TransactionType.INCOME);
     }
 
     public void addTransaction(Transaction transaction) {
@@ -37,7 +38,7 @@ public class Account {
 
     public double getTransactionsByTags(String tag) {
         double amount = 0;
-        for (Transaction transaction: this.transactions) {
+        for (Transaction transaction : this.transactions) {
             if (transaction.getTag().equals(tag)) {
                 amount += transaction.getAmount();
                 break;
@@ -48,7 +49,7 @@ public class Account {
 
     public double getTotalByTransactionType(Transaction.TransactionType type) {
         double total = 0;
-        for (Transaction transaction: this.transactions) {
+        for (Transaction transaction : this.transactions) {
             if (type == Transaction.TransactionType.INCOME) {
                 if (transaction.getAmount() > 0) {
                     total += transaction.getAmount();
@@ -65,13 +66,13 @@ public class Account {
     public String toString() {
         String title = "===== Account Summary =====\n";
         String income = "***** INCOME *****\n";
-        for (Transaction transaction: this.transactions) {
+        for (Transaction transaction : this.transactions) {
             if (transaction.getAmount() > 0) {
                 income = income.concat(transaction.toString());
             }
         }
         String expense = "***** EXPENSE *****\n";
-        for (Transaction transaction: this.transactions) {
+        for (Transaction transaction : this.transactions) {
             if (transaction.getAmount() < 0) {
                 expense = expense.concat(transaction.toString());
             }

@@ -21,7 +21,7 @@ public class Transaction {
     }
 
     public double getAmount() {
-        return this.type==TransactionType.INCOME?this.amount:-this.amount;
+        return this.type == TransactionType.INCOME ? this.amount : - this.amount;
     }
 
     public double getNetAmount() {
