@@ -23,7 +23,7 @@ public class AccountTest {
     public void testAddTransaction() {
         Transaction transaction = new Transaction(5, Transaction.TransactionType.EXPENSE, "Transport");
         this.account.addTransaction(transaction);
-        assertEquals(-5,this.account.getSurplus());
+        assertEquals(4995,this.account.getSurplus());
     }
 
     @Test
@@ -31,14 +31,14 @@ public class AccountTest {
         Transaction transaction = new Transaction(5, Transaction.TransactionType.EXPENSE, "Transport");
         this.account.addTransaction(transaction);
         this.account.updateTransaction(0, 20, "Transport");
-        assertEquals(-20,this.account.getSurplus());
+        assertEquals(4980,this.account.getSurplus());
     }
 
     @Test
     public void testRemoveTransaction() {
         Transaction transaction = new Transaction(5, Transaction.TransactionType.EXPENSE, "Transport");
         this.account.addTransaction(transaction);
-        assertEquals(0, this.account.getSurplus());
+        assertEquals(4995, this.account.getSurplus());
     }
 
     @Test
@@ -47,7 +47,7 @@ public class AccountTest {
         Transaction secondTransaction = new Transaction(10, Transaction.TransactionType.EXPENSE, "Food");
         this.account.addTransaction(firstTransaction);
         this.account.addTransaction(secondTransaction);
-        assertEquals(5,this.account.getTransactionsByTags("Transport"));
+        assertEquals(-5,this.account.getTransactionsByTags("Transport"));
     }
 
     @Test
