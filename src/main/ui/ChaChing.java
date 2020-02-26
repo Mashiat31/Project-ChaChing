@@ -12,21 +12,17 @@ import java.util.Scanner;
 public class ChaChing {
 
     private ArrayList<Account> accounts;
+
     public static void main(String[] args) throws IOException {
         ChaChing app = new ChaChing();
         Scanner menuChoice = new Scanner(System.in);
-        boolean exit = false;
-        while (!exit) {
-            ChaChing.displayMenu();
-            switch (menuChoice.nextInt()) {
-                case 1:
-                    app.createAccount();
+        boolean exit = false;        while (!exit) {
+            ChaChing.displayMenu();            switch (menuChoice.nextInt()) {
+                case 1:                    app.createAccount();
                     break;
-                case 2:
-                    app.showAccounts();
+                case 2:                    app.showAccounts();
                     break;
-                case 3:
-                    app.addTransaction();
+                case 3:                    app.addTransaction();
                     break;
                 case 4:
                     app.loadAccounts();
