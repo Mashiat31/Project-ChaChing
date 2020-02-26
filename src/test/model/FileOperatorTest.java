@@ -6,8 +6,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,6 +18,7 @@ public class FileOperatorTest {
 
     @BeforeEach
     public void runBefore() {
+
         app = new ChaChing();
         System.setIn(new ByteArrayInputStream("Testing Purpose\n2000\n".getBytes()));
         app.createAccount();
@@ -51,6 +54,10 @@ public class FileOperatorTest {
         try {
             System.setIn(new ByteArrayInputStream("savetest.csv".getBytes()));
             app.saveAccounts();
+            File savedFile = new File("savetest.csv");
+            Scanner scanner = new Scanner(savedFile);
+            String expectedFirstLine = "Testing Purpose,2000.00,2";
+            assertEquals(scanner.nextLine(), expectedFirstLine);
         } catch (IOException e) {
             fail("Save Account failed");
         }
@@ -65,8 +72,17 @@ public class FileOperatorTest {
             app.addTransaction();
             System.setIn(new ByteArrayInputStream("2\n1\n150\nGov Incentive\n".getBytes()));
             app.addTransaction();
-            System.setIn(new ByteArrayInputStream("savetest.csv".getBytes()));
+            System.setIn(new ByteArrayInputStream("savetest2.csv".getBytes()));
             app.saveAccounts();
+            File savedFile = new File("savetest2.csv");
+            Scanner scanner = new Scanner(savedFile);
+            String expectedFirstLine = "Testing Purpose,2000.00,2";
+            String expectedFourthLine = "Testing Purpose 2,1031.00,2";
+            assertEquals(scanner.nextLine(), expectedFirstLine);
+            for(int i = 0; i< 2;i++) {
+                scanner.nextLine();
+            }
+            assertEquals(scanner.nextLine(), expectedFourthLine);
         } catch (IOException e) {
             fail("Save Account failed");
         }
