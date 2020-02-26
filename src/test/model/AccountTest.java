@@ -6,6 +6,8 @@ import model.Transaction;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Scanner;
+
 public class AccountTest {
     private Account account;
 
@@ -84,5 +86,27 @@ public class AccountTest {
         this.account.addTransaction(firstTransaction);
         this.account.addTransaction(secondTransaction);
         assertEquals(textUI, account.toString());
+    }
+
+    @Test
+    public void testSerialize() {
+        Transaction firstTransaction = new Transaction(5, Transaction.TransactionType.EXPENSE, "Transport");
+        Transaction secondTransaction = new Transaction(10, Transaction.TransactionType.EXPENSE, "Food");
+        this.account.addTransaction(firstTransaction);
+        this.account.addTransaction(secondTransaction);
+        String expectedOutput = "Monthly Spending,5000.00,2\nTransport,EXPENSE,5.00\nFood,EXPENSE,10.00\n";
+        assertEquals(expectedOutput, this.account.serialize());
+    }
+
+    @Test
+    public void testDeserialize() {
+        assertEquals(0, this.account.getTransactions().size());
+        String input = "Monthly Spending,5000.00,2\nStationery,EXPENSE,20.00\nReimbursement,INCOME,150.00";
+        Scanner scanner = new Scanner(input);
+        this.account.deserialize(scanner);
+        assertEquals("Stationery",this.account.getTransactions().get(0).getTag());
+        assertEquals(20,this.account.getTransactions().get(0).getNetAmount());
+        assertEquals("Reimbursement",this.account.getTransactions().get(1).getTag());
+        assertEquals(150,this.account.getTransactions().get(1).getNetAmount());
     }
 }
