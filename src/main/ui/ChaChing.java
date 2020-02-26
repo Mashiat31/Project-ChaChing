@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class ChaChing {
-    private ArrayList<Account> accounts;
 
+    private ArrayList<Account> accounts;
     public static void main(String[] args) throws IOException {
         ChaChing app = new ChaChing();
         Scanner menuChoice = new Scanner(System.in);
@@ -82,7 +82,7 @@ public class ChaChing {
         System.out.println("> Please enter the path your file is located:");
         String path = prompt.nextLine();
         FileOperator operator = new FileOperator(path);
-        if (accounts.size()>0) {
+        if (accounts.size() > 0) {
             System.out.println("!!!!! WARNING: Existing records will be overwritten !!!!!\n");
             System.out.println("> Do you still wish to proceed? (y/N)");
             String proceed = prompt.nextLine();
@@ -127,8 +127,8 @@ public class ChaChing {
         System.out.println("> Is your transaction an income or expense ?");
         System.out.println("1. Income");
         System.out.println("2. Expense");
-        Transaction.TransactionType type = Integer.parseInt(prompt.nextLine()) == 1 ? Transaction.TransactionType.INCOME :
-                Transaction.TransactionType.EXPENSE;
+        Transaction.TransactionType type = Integer.parseInt(prompt.nextLine()) == 1
+                   ? Transaction.TransactionType.INCOME : Transaction.TransactionType.EXPENSE;
         System.out.println("> Please enter the amount:");
         double amount = Double.parseDouble(prompt.nextLine());
         System.out.println("> Please tag(s) your transaction:");
