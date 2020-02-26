@@ -18,7 +18,7 @@ public class FileOperator {
         FileReader reader = new FileReader(path);
         Scanner scanner = new Scanner(reader);
         ArrayList<Account> accounts = new ArrayList<>();
-        while(scanner.hasNext()) {
+        while (scanner.hasNext()) {
             Account account = new Account();
             account.deserialize(scanner);
             accounts.add(account);

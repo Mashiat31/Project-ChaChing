@@ -2,7 +2,9 @@ package persistence;
 
 import java.util.Scanner;
 
-public interface CSVSerializable<T> {
+@SuppressWarnings("checkstyle:TypeName")
+public interface Saveable<T> {
     public String serialize();
+
     public void deserialize(Scanner scanner);
 }

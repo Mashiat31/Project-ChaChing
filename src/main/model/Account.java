@@ -1,17 +1,17 @@
 package model;
 
-import persistence.CSVSerializable;
+import persistence.Saveable;
 
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Account implements CSVSerializable<Account> {
+public class Account implements Saveable<Account> {
     public String description;
     private ArrayList<Transaction> transactions;
     private double budget;
 
     public Account(String description, double budget) {
-        this.transactions = new ArrayList<Transaction>();
+        this.transactions = new ArrayList<>();
         this.description = description;
         this.budget = budget;
     }
@@ -101,14 +101,14 @@ public class Account implements CSVSerializable<Account> {
     }
 
     @Override
-    public void deserialize(Scanner scanner){
+    public void deserialize(Scanner scanner) {
         String line = scanner.nextLine();
         String[] tokens = line.split(",");
         this.description = tokens[0];
         this.budget = Double.parseDouble(tokens[1]);
         int numTransaction = Integer.parseInt(tokens[2]);
         this.transactions = new ArrayList<>();
-        for(int i = 0; i < numTransaction; i++) {
+        for (int i = 0; i < numTransaction; i++) {
             Transaction t = new Transaction();
             t.deserialize(scanner);
             this.transactions.add(t);

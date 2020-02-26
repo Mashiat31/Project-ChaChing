@@ -1,11 +1,12 @@
 package model;
 
-import persistence.CSVSerializable;
+import persistence.Saveable;
+import persistence.Saveable;
 
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Transaction implements CSVSerializable<Transaction> {
+public class Transaction implements Saveable<Transaction> {
 
     public enum TransactionType {
         EXPENSE,
