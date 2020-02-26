@@ -1,10 +1,12 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
+import persistence.CSVSerializable;
 
-public class Transaction {
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class Transaction implements CSVSerializable<Transaction> {
+
     public enum TransactionType {
         EXPENSE,
         INCOME
@@ -19,6 +21,8 @@ public class Transaction {
         this.type = type;
         this.tag = tag;
     }
+
+    public Transaction() {}
 
     public double getAmount() {
         return this.type == TransactionType.INCOME ? this.amount : - this.amount;
@@ -41,7 +45,21 @@ public class Transaction {
     }
 
     public String toString() {
-        return String.format("%s: %f\n",this.getTag(), this.getNetAmount());
+        return String.format("%s: %.2f\n",this.getTag(), this.getNetAmount());
+    }
+
+    @Override
+    public String serialize() {
+        return String.format("%s,%s,%.2f\n", this.getTag(),this.type.toString(), this.getNetAmount());
+    }
+
+    @Override
+    public void deserialize(Scanner scanner) {
+        String line = scanner.nextLine();
+        String[] tokens = line.split(",");
+        this.tag = tokens[0];
+        this.type = TransactionType.valueOf(tokens[1]);
+        this.amount = Double.parseDouble(tokens[2]);
     }
 
 }

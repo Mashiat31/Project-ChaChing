@@ -33,5 +33,12 @@ public class TransactionTest {
         assertEquals("Transport", transaction.getTag());
     }
 
+    @Test
+    public void testToString() {
+        this.transaction.setAmount(30);
+        this.transaction.setTag("Phone Bills");
+        assertEquals("Phone Bills: 30.00\n", this.transaction.toString());
+    }
+
 
 }

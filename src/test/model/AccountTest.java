@@ -27,6 +27,14 @@ public class AccountTest {
     }
 
     @Test
+    public void testGetTransactions() {
+        Transaction transaction = new Transaction(5, Transaction.TransactionType.EXPENSE, "Transport");
+        this.account.addTransaction(transaction);
+        assertEquals(-5, this.account.getTransactions().get(0).getAmount());
+        assertEquals("Transport", this.account.getTransactions().get(0).getTag());
+    }
+
+    @Test
     public void testUpdateTransaction() {
         Transaction transaction = new Transaction(5, Transaction.TransactionType.EXPENSE, "Transport");
         this.account.addTransaction(transaction);
@@ -38,7 +46,9 @@ public class AccountTest {
     public void testRemoveTransaction() {
         Transaction transaction = new Transaction(5, Transaction.TransactionType.EXPENSE, "Transport");
         this.account.addTransaction(transaction);
-        assertEquals(0, this.account.getSurplus());
+        assertEquals(4995.0, this.account.getSurplus());
+        this.account.removeTransaction(0);
+        assertEquals(5000, this.account.getSurplus());
     }
 
     @Test
@@ -64,5 +74,15 @@ public class AccountTest {
         Transaction firstTransaction = new Transaction(6000, Transaction.TransactionType.EXPENSE, "Transport");
         this.account.addTransaction(firstTransaction);
         assertTrue(this.account.isOverBudgetLimit());
+    }
+
+    @Test
+    public void testToString() {
+        String textUI = "===== Account Summary =====\n* Budget: 5000.00 *\n***** INCOME *****\nTutoring: 10.00\n***** EXPENSE *****\nTransport: 5.00\n";
+        Transaction firstTransaction = new Transaction(5, Transaction.TransactionType.EXPENSE, "Transport");
+        Transaction secondTransaction = new Transaction(10, Transaction.TransactionType.INCOME, "Tutoring");
+        this.account.addTransaction(firstTransaction);
+        this.account.addTransaction(secondTransaction);
+        assertEquals(textUI, account.toString());
     }
 }
