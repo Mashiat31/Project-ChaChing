@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Scanner;
+
 public class TransactionTest {
     private Transaction transaction;
 
@@ -31,6 +33,34 @@ public class TransactionTest {
         assertEquals("Food", transaction.getTag());
         this.transaction.setTag("Transport");
         assertEquals("Transport", transaction.getTag());
+    }
+
+    @Test
+    public void testToString() {
+        this.transaction.setAmount(30);
+        this.transaction.setTag("Phone Bills");
+        assertEquals("Phone Bills: 30.00\n", this.transaction.toString());
+    }
+
+    @Test
+    public void testSerialize() {
+        assertNotEquals(20, this.transaction.getNetAmount());
+        assertNotEquals("Stationery", this.transaction.getTag());
+        this.transaction.setAmount(20);
+        this.transaction.setTag("Stationery");
+        String expectedOutput = "Stationery,EXPENSE,20.00\n";
+        assertEquals(expectedOutput, this.transaction.serialize());
+    }
+
+    @Test
+    public void testDeserialize() {
+        assertNotEquals(20, this.transaction.getNetAmount());
+        assertNotEquals("Stationery", this.transaction.getTag());
+        String input = "Stationery,EXPENSE,20.00\n";
+        Scanner scanner = new Scanner(input);
+        this.transaction.deserialize(scanner);
+        assertEquals(20, this.transaction.getNetAmount());
+        assertEquals("Stationery", this.transaction.getTag());
     }
 
 

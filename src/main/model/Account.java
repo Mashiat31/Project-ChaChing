@@ -1,8 +1,11 @@
 package model;
 
-import java.util.ArrayList;
+import persistence.CSVSerializable;
 
-public class Account {
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class Account implements CSVSerializable<Account> {
     public String description;
     private ArrayList<Transaction> transactions;
     private double budget;
@@ -12,6 +15,8 @@ public class Account {
         this.description = description;
         this.budget = budget;
     }
+
+    public Account() {}
 
     public boolean isOverBudgetLimit() {
         return this.budget + getTotalByTransactionType(Transaction.TransactionType.EXPENSE) < 0;
@@ -30,6 +35,10 @@ public class Account {
         Transaction transaction = this.transactions.get(index);
         transaction.setAmount(amount);
         transaction.setTag(tag);
+    }
+
+    public ArrayList<Transaction> getTransactions() {
+        return this.transactions;
     }
 
     public void removeTransaction(int index) {
@@ -77,7 +86,32 @@ public class Account {
                 expense = expense.concat(transaction.toString());
             }
         }
-        String budget = String.format("* Budget: %f *\n", this.budget);
+        String budget = String.format("* Budget: %.2f *\n", this.budget);
         return title.concat(budget).concat(income).concat(expense);
+    }
+
+    @Override
+    public String serialize() {
+        StringBuilder result = new StringBuilder();
+        result.append(String.format("%s,%.2f,%d\n", this.description, this.budget, this.transactions.size()));
+        for (Transaction transaction: this.transactions) {
+            result.append(transaction.serialize());
+        }
+        return result.toString();
+    }
+
+    @Override
+    public void deserialize(Scanner scanner){
+        String line = scanner.nextLine();
+        String[] tokens = line.split(",");
+        this.description = tokens[0];
+        this.budget = Double.parseDouble(tokens[1]);
+        int numTransaction = Integer.parseInt(tokens[2]);
+        this.transactions = new ArrayList<>();
+        for(int i = 0; i < numTransaction; i++) {
+            Transaction t = new Transaction();
+            t.deserialize(scanner);
+            this.transactions.add(t);
+        }
     }
 }
