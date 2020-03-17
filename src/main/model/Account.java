@@ -1,30 +1,64 @@
 package model;
 
+import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import persistence.Saveable;
 
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Account implements Saveable<Account> {
-    public String description;
-    private ArrayList<Transaction> transactions;
-    private double budget;
+
+
+    public StringProperty description;
+    private ListProperty<Transaction> transactions;
+    private DoubleProperty budget;
 
     public Account(String description, double budget) {
-        this.transactions = new ArrayList<>();
-        this.description = description;
-        this.budget = budget;
+        ObservableList<Transaction> observableList = FXCollections.observableArrayList();
+        this.transactions = new SimpleListProperty<>(observableList);
+        this.description = new SimpleStringProperty(description);
+        this.budget = new SimpleDoubleProperty(budget);
     }
 
     public Account() {}
 
+    public double getBudget() {
+        return budget.get();
+    }
+
+    public DoubleProperty budgetProperty() {
+        return budget;
+    }
+
+    public String getDescription() {
+        return description.get();
+    }
+
+    public void setDescription(String description) {
+        this.description.set(description);
+    }
+
+    public StringProperty descriptionProperty() {
+        return description;
+    }
+
+    public void setBudget(double budget) {
+        this.budget.set(budget);
+    }
+
     public boolean isOverBudgetLimit() {
-        return this.budget + getTotalByTransactionType(Transaction.TransactionType.EXPENSE) < 0;
+        return this.getBudget() + getTotalByTransactionType(Transaction.TransactionType.EXPENSE) < 0;
     }
 
     public double getSurplus() {
-        return this.budget + getTotalByTransactionType(Transaction.TransactionType.EXPENSE)
+        return this.getBudget() + getTotalByTransactionType(Transaction.TransactionType.EXPENSE)
                 + getTotalByTransactionType(Transaction.TransactionType.INCOME);
+    }
+
+    public ObservableList<Transaction> getTransactions() {
+        return transactions.get();
     }
 
     public void addTransaction(Transaction transaction) {
@@ -35,10 +69,6 @@ public class Account implements Saveable<Account> {
         Transaction transaction = this.transactions.get(index);
         transaction.setAmount(amount);
         transaction.setTag(tag);
-    }
-
-    public ArrayList<Transaction> getTransactions() {
-        return this.transactions;
     }
 
     public void removeTransaction(int index) {
@@ -86,14 +116,14 @@ public class Account implements Saveable<Account> {
                 expense = expense.concat(transaction.toString());
             }
         }
-        String budget = String.format("* Budget: %.2f *\n", this.budget);
+        String budget = String.format("* Budget: %.2f *\n", this.budget.get());
         return title.concat(budget).concat(income).concat(expense);
     }
 
     @Override
     public String serialize() {
         StringBuilder result = new StringBuilder();
-        result.append(String.format("%s,%.2f,%d\n", this.description, this.budget, this.transactions.size()));
+        result.append(String.format("%s,%.2f,%d\n", this.description.get(), this.budget.get(), this.transactions.size()));
         for (Transaction transaction: this.transactions) {
             result.append(transaction.serialize());
         }
@@ -104,10 +134,11 @@ public class Account implements Saveable<Account> {
     public void deserialize(Scanner scanner) {
         String line = scanner.nextLine();
         String[] tokens = line.split(",");
-        this.description = tokens[0];
-        this.budget = Double.parseDouble(tokens[1]);
+        this.description = new SimpleStringProperty(tokens[0]);
+        this.budget = new SimpleDoubleProperty(Double.parseDouble(tokens[1]));
         int numTransaction = Integer.parseInt(tokens[2]);
-        this.transactions = new ArrayList<>();
+        ObservableList<Transaction> observableList = FXCollections.observableArrayList();
+        this.transactions = new SimpleListProperty<>(observableList);
         for (int i = 0; i < numTransaction; i++) {
             Transaction t = new Transaction();
             t.deserialize(scanner);

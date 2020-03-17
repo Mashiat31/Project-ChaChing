@@ -1,5 +1,6 @@
 package model;
 
+import javafx.beans.property.*;
 import persistence.Saveable;
 import persistence.Saveable;
 
@@ -13,36 +14,40 @@ public class Transaction implements Saveable<Transaction> {
         INCOME
     }
 
-    private TransactionType type;
-    private String tag;
-    private double amount;
+    private ObjectProperty<TransactionType> type;
+    private StringProperty tag;
+    private DoubleProperty amount;
 
     public Transaction(double amount, TransactionType type, String tag) {
-        this.amount = amount;
-        this.type = type;
-        this.tag = tag;
+        this.amount = new SimpleDoubleProperty(amount);
+        this.type = new SimpleObjectProperty<>(type);
+        this.tag = new SimpleStringProperty(tag);
     }
 
     public Transaction() {}
 
     public double getAmount() {
-        return this.type == TransactionType.INCOME ? this.amount : - this.amount;
+        return this.type.get() == TransactionType.INCOME ? this.amount.get() : - this.amount.get();
     }
 
     public double getNetAmount() {
-        return this.amount;
+        return this.amount.get();
     }
 
     public String getTag() {
-        return this.tag;
+        return this.tag.get();
+    }
+
+    public String getType() {
+        return type.get().toString();
     }
 
     public void setAmount(double amount) {
-        this.amount = amount;
+        this.amount.set(amount);
     }
 
     public void setTag(String tag) {
-        this.tag = tag;
+        this.tag.set(tag);
     }
 
     public String toString() {
@@ -51,16 +56,16 @@ public class Transaction implements Saveable<Transaction> {
 
     @Override
     public String serialize() {
-        return String.format("%s,%s,%.2f\n", this.getTag(),this.type.toString(), this.getNetAmount());
+        return String.format("%s,%s,%.2f\n", this.getTag(),this.type.get().toString(), this.getNetAmount());
     }
 
     @Override
     public void deserialize(Scanner scanner) {
         String line = scanner.nextLine();
         String[] tokens = line.split(",");
-        this.tag = tokens[0];
-        this.type = TransactionType.valueOf(tokens[1]);
-        this.amount = Double.parseDouble(tokens[2]);
+        this.tag = new SimpleStringProperty(tokens[0]);
+        this.type = new SimpleObjectProperty<>(TransactionType.valueOf(tokens[1]));
+        this.amount = new SimpleDoubleProperty(Double.parseDouble(tokens[2]));
     }
 
 }

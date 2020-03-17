@@ -86,7 +86,7 @@ public class ChaChing {
                 return;
             }
         }
-        operator.load(this);
+//        operator.load(this);
     }
 
     public void saveAccounts() throws IOException {
@@ -99,7 +99,7 @@ public class ChaChing {
             return;
         }
         System.out.println("***** Account details has been successfully written into file *****\n");
-        operator.save(this);
+//        operator.save(this);
     }
 
     public void showAccounts() {
