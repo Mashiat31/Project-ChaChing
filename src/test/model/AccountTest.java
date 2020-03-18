@@ -20,6 +20,28 @@ public class AccountTest {
     }
 
     @Test
+    public void testGetBudget() {
+        assertEquals(5000, account.getBudget());
+    }
+
+    @Test
+    public void testSetBudget() {
+        account.setBudget(4000);
+        assertEquals(4000, account.getBudget());
+    }
+
+    @Test
+    public void testGetDescription() {
+        assertEquals("Monthly Spending", account.getDescription());
+    }
+
+    @Test
+    public void testSetDescription() {
+        account.setDescription("Quarterly Spending");
+        assertEquals("Quarterly Spending", account.getDescription());
+    }
+
+    @Test
     public void testAddTransaction() {
         Transaction transaction = new Transaction(5, Transaction.TransactionType.EXPENSE, "Transport");
         this.account.addTransaction(transaction);
@@ -37,8 +59,10 @@ public class AccountTest {
     @Test
     public void testRemoveTransaction() {
         Transaction transaction = new Transaction(5, Transaction.TransactionType.EXPENSE, "Transport");
-        this.account.addTransaction(transaction);
-        assertEquals(4995, this.account.getSurplus());
+        account.addTransaction(transaction);
+        assertEquals(1, this.account.getTransactions().size());
+        account.removeTransaction(this.account.getTransactions().size()-1);
+        assertEquals(0, this.account.getTransactions().size());
     }
 
     @Test
@@ -47,7 +71,8 @@ public class AccountTest {
         Transaction secondTransaction = new Transaction(10, Transaction.TransactionType.EXPENSE, "Food");
         this.account.addTransaction(firstTransaction);
         this.account.addTransaction(secondTransaction);
-        assertEquals(-5,this.account.getTransactionsByTags("Transport"));
+        assertEquals(1,this.account.getTransactionsByTags("Transport").size());
+        assertEquals(-5, this.account.getTransactionsByTags("Transport").get(0).getAmount());
     }
 
     @Test

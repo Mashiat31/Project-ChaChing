@@ -11,7 +11,7 @@ import java.util.Scanner;
 public class Account implements Saveable<Account> {
 
 
-    public StringProperty description;
+    private StringProperty description;
     private ListProperty<Transaction> transactions;
     private DoubleProperty budget;
 

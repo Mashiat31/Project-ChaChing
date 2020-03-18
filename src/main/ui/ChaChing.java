@@ -1,5 +1,9 @@
 package ui;
 
+import javafx.beans.Observable;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.util.Callback;
 import model.Account;
 import model.Transaction;
 import persistence.FileOperator;
@@ -11,7 +15,7 @@ import java.util.Scanner;
 
 public class ChaChing {
 
-    private ArrayList<Account> accounts;
+    private ObservableList<Account> accounts;
 
     public static void main(String[] args) throws IOException {
         ChaChing app = new ChaChing();
@@ -40,10 +44,10 @@ public class ChaChing {
     }
 
     public ChaChing() {
-        this.accounts = new ArrayList<Account>();
+        this.accounts = FXCollections.observableArrayList();
     }
 
-    public ArrayList<Account> getAccounts() {
+    public ObservableList<Account> getAccounts() {
         return this.accounts;
     }
 
@@ -68,7 +72,7 @@ public class ChaChing {
         this.accounts.add(account);
         System.out.println("***** Account created successfully *****\n");
         System.out.println("> Account Summary: ");
-        System.out.println(String.format("Description: %s", account.description));
+        System.out.println(String.format("Description: %s", account.getDescription()));
         System.out.println(String.format("Current balance: %f", account.getSurplus()));
         System.out.println(">>>>> Returning to main menu <<<<<\n");
     }
@@ -86,7 +90,7 @@ public class ChaChing {
                 return;
             }
         }
-//        operator.load(this);
+        this.accounts.addAll(operator.load());
     }
 
     public void saveAccounts() throws IOException {
@@ -99,7 +103,7 @@ public class ChaChing {
             return;
         }
         System.out.println("***** Account details has been successfully written into file *****\n");
-//        operator.save(this);
+        operator.save(this.accounts);
     }
 
     public void showAccounts() {
@@ -133,9 +137,5 @@ public class ChaChing {
         targetAccount.addTransaction(transaction);
         System.out.println("***** Transaction recorded successfully *****");
         System.out.println(">>>>> Returning to main menu <<<<<\n");
-    }
-
-    public void restoreAccounts(ArrayList<Account> accounts) {
-        this.accounts = accounts;
     }
 }

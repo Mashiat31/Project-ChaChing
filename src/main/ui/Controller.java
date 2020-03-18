@@ -221,10 +221,10 @@ public class Controller implements Initializable {
             @Override
             protected void updateItem(Account item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || item == null || item.description.get() == null) {
+                if (empty || item == null || item.getDescription() == null) {
                     setText(null);
                 } else {
-                    setText(item.description.getValue());
+                    setText(item.getDescription());
                 }
             }
         });
