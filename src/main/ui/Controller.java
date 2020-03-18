@@ -10,6 +10,8 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Side;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
@@ -65,6 +67,9 @@ public class Controller implements Initializable {
 
     @FXML
     private Text budgetLabel;
+
+    @FXML
+    private Button chartButton;
 
     public Controller() {
         this.operator = new FileOperator();
@@ -186,11 +191,32 @@ public class Controller implements Initializable {
         }
     }
 
+    @FXML
+    private void showPieChart() {
+        PieChart pieChart = new PieChart();
+        for(String tag: currentAccount.getTransactionTags("EXPENSE")) {
+            double expenseTotal = 0;
+            for (Transaction transaction: currentAccount.getTransactionsByTags(tag)) {
+                expenseTotal += transaction.getNetAmount();
+            }
+            PieChart.Data slice = new PieChart.Data(tag, expenseTotal);
+            pieChart.getData().add(slice);
+        }
+        pieChart.setLegendSide(Side.LEFT);
+        Dialog dialog = new Dialog();
+        dialog.setTitle("Expense Overview");
+        DialogPane dialogPane = dialog.getDialogPane();
+        dialogPane.getButtonTypes().addAll(ButtonType.OK);
+        dialogPane.setContent(new VBox(8, pieChart));
+        dialog.show();
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         addTransactionMenuButton.setDisable(true);
         saveMenuButton.setDisable(true);
         saveAsMenuButton.setDisable(true);
+        chartButton.setDisable(true);
         accountListView.setCellFactory(param -> new ListCell<Account>() {
             @Override
             protected void updateItem(Account item, boolean empty) {
@@ -211,6 +237,7 @@ public class Controller implements Initializable {
                 balanceLabel.setText(String.format("Balance: %.2f", currentAccount.getSurplus()));
                 transactionTable.setItems(currentAccount.getTransactions());
                 addTransactionMenuButton.setDisable(false);
+                chartButton.setDisable(false);
             }
         });
         accountListView.setItems(accounts);

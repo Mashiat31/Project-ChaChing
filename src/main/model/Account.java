@@ -57,6 +57,17 @@ public class Account implements Saveable<Account> {
                 + getTotalByTransactionType(Transaction.TransactionType.INCOME);
     }
 
+
+    public ArrayList<String> getTransactionTags(String transactionType) {
+        ArrayList<String> tags = new ArrayList<>();
+        for (Transaction transaction: this.transactions.get()){
+            if(!tags.contains(transaction.getTag()) && transaction.getType().equals(transactionType)) {
+                tags.add(transaction.getTag());
+            }
+        }
+        return tags;
+    }
+
     public ObservableList<Transaction> getTransactions() {
         return transactions.get();
     }
@@ -75,15 +86,14 @@ public class Account implements Saveable<Account> {
         this.transactions.remove(index);
     }
 
-    public double getTransactionsByTags(String tag) {
-        double amount = 0;
+    public ArrayList<Transaction> getTransactionsByTags(String tag) {
+        ArrayList<Transaction> taggedTransactions = new ArrayList<>();
         for (Transaction transaction : this.transactions) {
             if (transaction.getTag().equals(tag)) {
-                amount += transaction.getAmount();
-                break;
+                taggedTransactions.add(transaction);
             }
         }
-        return amount;
+        return taggedTransactions;
     }
 
     public double getTotalByTransactionType(Transaction.TransactionType type) {

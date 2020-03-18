@@ -21,10 +21,10 @@
           <items>
             <MenuItem mnemonicParsing="false" onAction="#openFile" text="Open…" />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Save" fx:id="saveMenuButton" onAction="#saveFile"/>
-            <MenuItem mnemonicParsing="false" text="Save As…" fx:id="saveAsMenuButton" onAction="#saveFileAs" />
+            <MenuItem fx:id="saveMenuButton" mnemonicParsing="false" onAction="#saveFile" text="Save" />
+            <MenuItem fx:id="saveAsMenuButton" mnemonicParsing="false" onAction="#saveFileAs" text="Save As…" />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Quit" onAction="#quitApplication" />
+            <MenuItem mnemonicParsing="false" onAction="#quitApplication" text="Quit" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Account">
@@ -45,16 +45,17 @@
                   </AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="370.0" prefWidth="480.0">
                      <children>
-                        <Text layoutX="25.0" layoutY="33.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Balance" fx:id="balanceLabel" />
-                        <Text layoutX="141.0" layoutY="33.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Budget" fx:id="budgetLabel" />
+                        <Text fx:id="balanceLabel" layoutX="25.0" layoutY="33.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Balance" />
+                        <Text fx:id="budgetLabel" layoutX="141.0" layoutY="33.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Budget" />
                         <Button fx:id="addTransactionMenuButton" layoutX="301.0" layoutY="15.0" mnemonicParsing="false" onAction="#addTransaction" text="Add Transaction" />
-                        <TableView fx:id="transactionTable" layoutY="65.0" prefHeight="333.0" prefWidth="472.0">
+                        <TableView fx:id="transactionTable" layoutY="105.0" prefHeight="293.0" prefWidth="472.0">
                           <columns>
                             <TableColumn fx:id="transactionTypeColumn" prefWidth="75.0" text="Type" />
                             <TableColumn fx:id="transactionAmountColumn" prefWidth="123.0" text="Amount" />
                             <TableColumn fx:id="transactionTagColumn" prefWidth="225.0" text="Tag" />
                           </columns>
                         </TableView>
+                        <Button layoutX="302.0" layoutY="66.0" mnemonicParsing="false" text="View in PieChart" fx:id="chartButton" onAction="#showPieChart" />
                      </children>
                   </AnchorPane>
               </items>
