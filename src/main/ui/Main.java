@@ -13,7 +13,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 @SuppressWarnings("checkstyle:RightCurly")
-public class Main extends Application{
+public class Main extends Application {
 
     private Stage mainStage;
 

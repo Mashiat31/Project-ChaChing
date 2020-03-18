@@ -101,7 +101,7 @@ public class Controller implements Initializable {
                 new FileChooser.ExtensionFilter("Finance Records", "*.csv")
         );
         File fileChosen = fileChooser.showOpenDialog(this.stage);
-        if(fileChosen != null) {
+        if (fileChosen != null) {
             this.operator.setPath(fileChosen.getAbsolutePath());
             this.accounts.addAll(operator.load());
             this.saveMenuButton.setDisable(false);
@@ -152,6 +152,8 @@ public class Controller implements Initializable {
         });
     }
 
+
+    @SuppressWarnings("checkstyle:MethodLength")
     @FXML
     private void addTransaction() {
         if (currentAccount != null) {
@@ -179,7 +181,8 @@ public class Controller implements Initializable {
             dialog.setResultConverter((ButtonType button) -> {
                 if (button == ButtonType.OK) {
                     double amount = Double.parseDouble(amountTextField.getText());
-                    Transaction.TransactionType type = expenseRadioButton.isSelected()? Transaction.TransactionType.EXPENSE: Transaction.TransactionType.INCOME;
+                    Transaction.TransactionType type = expenseRadioButton.isSelected()
+                            ? Transaction.TransactionType.EXPENSE : Transaction.TransactionType.INCOME;
                     return new Transaction(amount, type, tagTextField.getText());
                 }
                 return null;
@@ -194,7 +197,7 @@ public class Controller implements Initializable {
     @FXML
     private void showPieChart() {
         PieChart pieChart = new PieChart();
-        for(String tag: currentAccount.getTransactionTags("EXPENSE")) {
+        for (String tag: currentAccount.getTransactionTags("EXPENSE")) {
             double expenseTotal = 0;
             for (Transaction transaction: currentAccount.getTransactionsByTags(tag)) {
                 expenseTotal += transaction.getNetAmount();
@@ -211,6 +214,7 @@ public class Controller implements Initializable {
         dialog.show();
     }
 
+    @SuppressWarnings("checkstyle:MethodLength")
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         addTransactionMenuButton.setDisable(true);
@@ -242,7 +246,8 @@ public class Controller implements Initializable {
         });
         accountListView.setItems(accounts);
         transactionTypeColumn.setCellValueFactory(
-                transactionStringCellDataFeatures -> new SimpleStringProperty(transactionStringCellDataFeatures.getValue().getType())
+                transactionStringCellDataFeatures
+                    -> new SimpleStringProperty(transactionStringCellDataFeatures.getValue().getType())
         );
         transactionAmountColumn.setCellValueFactory(
                 new PropertyValueFactory<Transaction, String>("amount")

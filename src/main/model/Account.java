@@ -60,8 +60,8 @@ public class Account implements Saveable<Account> {
 
     public ArrayList<String> getTransactionTags(String transactionType) {
         ArrayList<String> tags = new ArrayList<>();
-        for (Transaction transaction: this.transactions.get()){
-            if(!tags.contains(transaction.getTag()) && transaction.getType().equals(transactionType)) {
+        for (Transaction transaction: this.transactions.get()) {
+            if (!tags.contains(transaction.getTag()) && transaction.getType().equals(transactionType)) {
                 tags.add(transaction.getTag());
             }
         }
@@ -133,7 +133,8 @@ public class Account implements Saveable<Account> {
     @Override
     public String serialize() {
         StringBuilder result = new StringBuilder();
-        result.append(String.format("%s,%.2f,%d\n", this.description.get(), this.budget.get(), this.transactions.size()));
+        result.append(String.format("%s,%.2f,%d\n", this.description.get(),
+                 this.budget.get(), this.transactions.size()));
         for (Transaction transaction: this.transactions) {
             result.append(transaction.serialize());
         }
