@@ -103,7 +103,7 @@ public class Controller implements Initializable {
                 new FileChooser.ExtensionFilter("Finance Records", "*.csv")
         );
         File fileChosen = fileChooser.showOpenDialog(this.stage);
-        if(fileChosen != null) {
+        if (fileChosen != null) {
             this.operator.setPath(fileChosen.getAbsolutePath());
             this.accounts.addAll(operator.load());
             this.saveMenuButton.setDisable(false);
@@ -154,7 +154,7 @@ public class Controller implements Initializable {
         });
     }
 
-    private Dialog createDialogView(String title, String headerText, Node ...nodes) {
+    private Dialog createDialogView(String title, String headerText, Node...nodes) {
         Dialog dialog = new Dialog<>();
         dialog.setTitle(title);
         dialog.setHeaderText(headerText);
@@ -180,11 +180,15 @@ public class Controller implements Initializable {
         HBox amountFormField = new HBox(8, new Label("Amount:"), amountTextField);
         TextField tagTextField = new TextField(existingTransaction.getTag());
         HBox tagFormField = new HBox(8, new Label("Tag:"), tagTextField);
-        Dialog<Transaction> dialog = createDialogView("Edit Transaction", "Update details for your transaction", optionsFormField, amountFormField, tagFormField);
+        Dialog<Transaction> dialog
+                = createDialogView("Edit Transaction",
+                "Update details for your transaction", optionsFormField, amountFormField, tagFormField);
         dialog.setResultConverter((ButtonType button) -> {
             if (button == ButtonType.OK) {
                 double amount = Double.parseDouble(amountTextField.getText());
-                Transaction.TransactionType type = expenseRadioButton.isSelected()? Transaction.TransactionType.EXPENSE: Transaction.TransactionType.INCOME;
+                Transaction.TransactionType type
+                        = expenseRadioButton.isSelected()
+                        ? Transaction.TransactionType.EXPENSE : Transaction.TransactionType.INCOME;
                 return new Transaction(amount, type, tagTextField.getText());
             }
             return null;
@@ -205,11 +209,13 @@ public class Controller implements Initializable {
         HBox amountFormField = new HBox(8, new Label("Amount:"), amountTextField);
         TextField tagTextField = new TextField();
         HBox tagFormField = new HBox(8, new Label("Tag:"), tagTextField);
-        Dialog<Transaction> dialog = createDialogView("New Transaction", "Enter details for your new transaction", optionsFormField, amountFormField, tagFormField);
+        Dialog<Transaction> dialog = createDialogView("New Transaction",
+                "Enter details for your new transaction", optionsFormField, amountFormField, tagFormField);
         dialog.setResultConverter((ButtonType button) -> {
             if (button == ButtonType.OK) {
                 double amount = Double.parseDouble(amountTextField.getText());
-                Transaction.TransactionType type = expenseRadioButton.isSelected()? Transaction.TransactionType.EXPENSE: Transaction.TransactionType.INCOME;
+                Transaction.TransactionType type = expenseRadioButton.isSelected()
+                        ? Transaction.TransactionType.EXPENSE : Transaction.TransactionType.INCOME;
                 return new Transaction(amount, type, tagTextField.getText());
             }
             return null;
@@ -223,7 +229,7 @@ public class Controller implements Initializable {
     @FXML
     private void showPieChart() {
         PieChart pieChart = new PieChart();
-        for(String tag: currentAccount.getTransactionTags("EXPENSE")) {
+        for (String tag: currentAccount.getTransactionTags("EXPENSE")) {
             double expenseTotal = 0;
             for (Transaction transaction: currentAccount.getTransactionsByTags(tag)) {
                 expenseTotal += transaction.getNetAmount();
@@ -271,7 +277,8 @@ public class Controller implements Initializable {
 
     private void sanitizeTableColumnsDisplayValue() {
         transactionTypeColumn.setCellValueFactory(
-                transactionStringCellDataFeatures -> new SimpleStringProperty(transactionStringCellDataFeatures.getValue().getType())
+                transactionStringCellDataFeatures
+                    -> new SimpleStringProperty(transactionStringCellDataFeatures.getValue().getType())
         );
         transactionAmountColumn.setCellValueFactory(
                 new PropertyValueFactory<Transaction, String>("amount")
