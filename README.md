@@ -44,7 +44,7 @@ As a user, I want to be able set a budget
 <li> As a user, I want to be able to create charts
  on one or more accounts and view my monthly balance sheets graphically. </li>
   </ul>
-  ### Instructions for Grader
+  <h3>Instructions for Grader</h3>
 
   Upon compiling the program and execute it, the application's features/functionality can be evaluate by following performing following actions:
 
