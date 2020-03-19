@@ -2,6 +2,7 @@ package ui;
 
 import javafx.application.Platform;
 import javafx.beans.Observable;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -11,6 +12,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Side;
+import javafx.scene.Node;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -101,7 +103,7 @@ public class Controller implements Initializable {
                 new FileChooser.ExtensionFilter("Finance Records", "*.csv")
         );
         File fileChosen = fileChooser.showOpenDialog(this.stage);
-        if (fileChosen != null) {
+        if(fileChosen != null) {
             this.operator.setPath(fileChosen.getAbsolutePath());
             this.accounts.addAll(operator.load());
             this.saveMenuButton.setDisable(false);
@@ -152,52 +154,76 @@ public class Controller implements Initializable {
         });
     }
 
+    private Dialog createDialogView(String title, String headerText, Node ...nodes) {
+        Dialog dialog = new Dialog<>();
+        dialog.setTitle(title);
+        dialog.setHeaderText(headerText);
+        DialogPane dialogPane = dialog.getDialogPane();
+        dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        dialogPane.setContent(new VBox(8, nodes));
+        return dialog;
+    }
 
-    @SuppressWarnings("checkstyle:MethodLength")
+    private Optional<Transaction> editTransation(Transaction existingTransaction) {
+        RadioButton expenseRadioButton = new RadioButton("Expense");
+        RadioButton incomeRadioButton = new RadioButton("Income");
+        if (existingTransaction.getType().equals("EXPENSE")) {
+            expenseRadioButton.setSelected(true);
+        } else {
+            incomeRadioButton.setSelected(true);
+        }
+        ToggleGroup radioGroup = new ToggleGroup();
+        expenseRadioButton.setToggleGroup(radioGroup);
+        incomeRadioButton.setToggleGroup(radioGroup);
+        VBox optionsFormField = new VBox(8, new Label("Type:"), new HBox(8, expenseRadioButton, incomeRadioButton));
+        TextField amountTextField = new TextField(String.format("%.2f", existingTransaction.getNetAmount()));
+        HBox amountFormField = new HBox(8, new Label("Amount:"), amountTextField);
+        TextField tagTextField = new TextField(existingTransaction.getTag());
+        HBox tagFormField = new HBox(8, new Label("Tag:"), tagTextField);
+        Dialog<Transaction> dialog = createDialogView("Edit Transaction", "Update details for your transaction", optionsFormField, amountFormField, tagFormField);
+        dialog.setResultConverter((ButtonType button) -> {
+            if (button == ButtonType.OK) {
+                double amount = Double.parseDouble(amountTextField.getText());
+                Transaction.TransactionType type = expenseRadioButton.isSelected()? Transaction.TransactionType.EXPENSE: Transaction.TransactionType.INCOME;
+                return new Transaction(amount, type, tagTextField.getText());
+            }
+            return null;
+        });
+        return dialog.showAndWait();
+    }
+
     @FXML
     private void addTransaction() {
-        if (currentAccount != null) {
-            Dialog<Transaction> dialog = new Dialog<>();
-            dialog.setTitle("New Transaction");
-            dialog.setHeaderText("Enter details for your new transaction");
-            DialogPane dialogPane = dialog.getDialogPane();
-            dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-            Label transactionTypeLabel = new Label("Type:");
-            RadioButton expenseRadioButton = new RadioButton("Expense");
-            expenseRadioButton.setSelected(true);
-            RadioButton incomeRadioButton = new RadioButton("Income");
-            ToggleGroup radioGroup = new ToggleGroup();
-            expenseRadioButton.setToggleGroup(radioGroup);
-            incomeRadioButton.setToggleGroup(radioGroup);
-            HBox options = new HBox(8, expenseRadioButton, incomeRadioButton);
-            VBox optionsFormField = new VBox(8, transactionTypeLabel, options);
-            TextField amountTextField = new TextField();
-            Label amountNameLabel = new Label("Amount:");
-            HBox amountFormField = new HBox(8, amountNameLabel, amountTextField);
-            TextField tagTextField = new TextField();
-            Label tagNameLabel = new Label("Tag:");
-            HBox tagFormField = new HBox(8, tagNameLabel, tagTextField);
-            dialogPane.setContent(new VBox(8, optionsFormField, amountFormField, tagFormField));
-            dialog.setResultConverter((ButtonType button) -> {
-                if (button == ButtonType.OK) {
-                    double amount = Double.parseDouble(amountTextField.getText());
-                    Transaction.TransactionType type = expenseRadioButton.isSelected()
-                            ? Transaction.TransactionType.EXPENSE : Transaction.TransactionType.INCOME;
-                    return new Transaction(amount, type, tagTextField.getText());
-                }
-                return null;
-            });
-            Optional<Transaction> optionalTransaction = dialog.showAndWait();
-            optionalTransaction.ifPresent((Transaction transaction) -> {
-                this.currentAccount.addTransaction(transaction);
-            });
-        }
+        RadioButton expenseRadioButton = new RadioButton("Expense");
+        RadioButton incomeRadioButton = new RadioButton("Income");
+        expenseRadioButton.setSelected(true);
+        ToggleGroup radioGroup = new ToggleGroup();
+        expenseRadioButton.setToggleGroup(radioGroup);
+        incomeRadioButton.setToggleGroup(radioGroup);
+        VBox optionsFormField = new VBox(8, new Label("Type:"), new HBox(8, expenseRadioButton, incomeRadioButton));
+        TextField amountTextField = new TextField();
+        HBox amountFormField = new HBox(8, new Label("Amount:"), amountTextField);
+        TextField tagTextField = new TextField();
+        HBox tagFormField = new HBox(8, new Label("Tag:"), tagTextField);
+        Dialog<Transaction> dialog = createDialogView("New Transaction", "Enter details for your new transaction", optionsFormField, amountFormField, tagFormField);
+        dialog.setResultConverter((ButtonType button) -> {
+            if (button == ButtonType.OK) {
+                double amount = Double.parseDouble(amountTextField.getText());
+                Transaction.TransactionType type = expenseRadioButton.isSelected()? Transaction.TransactionType.EXPENSE: Transaction.TransactionType.INCOME;
+                return new Transaction(amount, type, tagTextField.getText());
+            }
+            return null;
+        });
+        Optional<Transaction> optionalTransaction = dialog.showAndWait();
+        optionalTransaction.ifPresent((Transaction transaction) -> {
+            this.currentAccount.addTransaction(transaction);
+        });
     }
 
     @FXML
     private void showPieChart() {
         PieChart pieChart = new PieChart();
-        for (String tag: currentAccount.getTransactionTags("EXPENSE")) {
+        for(String tag: currentAccount.getTransactionTags("EXPENSE")) {
             double expenseTotal = 0;
             for (Transaction transaction: currentAccount.getTransactionsByTags(tag)) {
                 expenseTotal += transaction.getNetAmount();
@@ -214,13 +240,7 @@ public class Controller implements Initializable {
         dialog.show();
     }
 
-    @SuppressWarnings("checkstyle:MethodLength")
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        addTransactionMenuButton.setDisable(true);
-        saveMenuButton.setDisable(true);
-        saveAsMenuButton.setDisable(true);
-        chartButton.setDisable(true);
+    private void setupAccountListViewEventListeners() {
         accountListView.setCellFactory(param -> new ListCell<Account>() {
             @Override
             protected void updateItem(Account item, boolean empty) {
@@ -235,19 +255,23 @@ public class Controller implements Initializable {
         accountListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Account>() {
             @Override
             public void changed(ObservableValue<? extends Account> observable, Account oldValue, Account newValue) {
-                // Your action here
                 currentAccount = accounts.get(accountListView.getSelectionModel().getSelectedIndices().get(0));
-                budgetLabel.setText(String.format("Budget: %.2f", currentAccount.getBudget()));
-                balanceLabel.setText(String.format("Balance: %.2f", currentAccount.getSurplus()));
-                transactionTable.setItems(currentAccount.getTransactions());
-                addTransactionMenuButton.setDisable(false);
-                chartButton.setDisable(false);
+                contextualizeAccountView();
             }
         });
-        accountListView.setItems(accounts);
+    }
+
+    private void contextualizeAccountView() {
+        budgetLabel.setText(String.format("Budget: %.2f", currentAccount.getBudget()));
+        balanceLabel.setText(String.format("Balance: %.2f", currentAccount.getSurplus()));
+        transactionTable.setItems(currentAccount.getTransactions());
+        addTransactionMenuButton.setDisable(false);
+        chartButton.setDisable(false);
+    }
+
+    private void sanitizeTableColumnsDisplayValue() {
         transactionTypeColumn.setCellValueFactory(
-                transactionStringCellDataFeatures
-                    -> new SimpleStringProperty(transactionStringCellDataFeatures.getValue().getType())
+                transactionStringCellDataFeatures -> new SimpleStringProperty(transactionStringCellDataFeatures.getValue().getType())
         );
         transactionAmountColumn.setCellValueFactory(
                 new PropertyValueFactory<Transaction, String>("amount")
@@ -255,6 +279,51 @@ public class Controller implements Initializable {
         transactionTagColumn.setCellValueFactory(
                 new PropertyValueFactory<Transaction, String>("tag")
         );
+    }
+
+    private void setupTransactionTableView() {
+        transactionTable.setEditable(true);
+        transactionTable.setRowFactory(tableView -> {
+            final TableRow<Transaction> row = new TableRow<>();
+            final ContextMenu menu = new ContextMenu();
+            MenuItem editItem = new MenuItem("Edit");
+            MenuItem removeItem = new MenuItem("Remove");
+            removeItem.setOnAction(e -> {
+                transactionTable.getItems().remove(row.getItem());
+            });
+            editItem.setOnAction(e -> {
+                Optional<Transaction> optionalTransaction = editTransation(row.getItem());
+                optionalTransaction.ifPresent((Transaction transaction) -> {
+                    row.getItem().setAmount(transaction.getNetAmount());
+                    row.getItem().setTag(transaction.getTag());
+                    row.getItem().setType(Transaction.TransactionType.valueOf(transaction.getType()));
+                    tableView.refresh();
+                });
+            });
+            menu.getItems().addAll(editItem,removeItem);
+            row.contextMenuProperty().bind(
+                    Bindings.when(Bindings.isNotNull(row.itemProperty()))
+                            .then(menu)
+                            .otherwise((ContextMenu)null));
+            return row;
+        });
+
+    }
+
+    private void setDefaultButtonStates() {
+        addTransactionMenuButton.setDisable(true);
+        saveMenuButton.setDisable(true);
+        saveAsMenuButton.setDisable(true);
+        chartButton.setDisable(true);
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        setDefaultButtonStates();
+        setupAccountListViewEventListeners();
+        accountListView.setItems(accounts);
+        setupTransactionTableView();
+        sanitizeTableColumnsDisplayValue();
     }
 
     @FXML

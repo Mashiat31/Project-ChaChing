@@ -134,7 +134,7 @@ public class Account implements Saveable<Account> {
     public String serialize() {
         StringBuilder result = new StringBuilder();
         result.append(String.format("%s,%.2f,%d\n", this.description.get(),
-                 this.budget.get(), this.transactions.size()));
+                this.budget.get(), this.transactions.size()));
         for (Transaction transaction: this.transactions) {
             result.append(transaction.serialize());
         }

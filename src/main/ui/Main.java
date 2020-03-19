@@ -2,11 +2,8 @@ package ui;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -26,17 +23,13 @@ public class Main extends Application {
 
     public void initRootLayout() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("ui.fxml"));
-        Parent root = (Parent) loader.load();
+        Parent root = loader.load();
         Scene scene = new Scene(root, 640, 480);
-        Controller controller = (Controller)loader.getController();
+        Controller controller = loader.getController();
         controller.setStage(mainStage);
         scene.setFill(Color.TRANSPARENT);
         mainStage.setScene(scene);
         mainStage.show();
-    }
-
-    public Stage getMainStage() {
-        return mainStage;
     }
 
     public static void main(String[] args)  {
