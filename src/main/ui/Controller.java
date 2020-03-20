@@ -164,7 +164,8 @@ public class Controller implements Initializable {
         return dialog;
     }
 
-    private Transaction getValueFromTransactionDialog(TextField amountTextField, TextField tagTextField, RadioButton expenseRadioButton) {
+    private Transaction getValueFromTransactionDialog(TextField amountTextField,
+                                                      TextField tagTextField, RadioButton expenseRadioButton) {
         double amount = Double.parseDouble(amountTextField.getText());
         Transaction.TransactionType type
                 = expenseRadioButton.isSelected()
@@ -296,7 +297,8 @@ public class Controller implements Initializable {
             });
             editItem.setOnAction(e -> {
                 editTransaction(row.getItem()).ifPresent((Transaction transaction) -> {
-                    row.getItem().setAmount(transaction.getNetAmount()).setTag(transaction.getTag()).setType(Transaction.TransactionType.valueOf(transaction.getType()));
+                    row.getItem().setAmount(transaction.getNetAmount()).setTag(transaction.getTag())
+                         .setType(Transaction.TransactionType.valueOf(transaction.getType()));
                     tableView.refresh();
                 });
             });
