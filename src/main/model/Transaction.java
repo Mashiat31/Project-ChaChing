@@ -42,16 +42,19 @@ public class Transaction implements Saveable<Transaction> {
         return type.get().toString();
     }
 
-    public void setType(TransactionType type) {
+    public Transaction setType(TransactionType type) {
         this.type.set(type);
+        return this;
     }
 
-    public void setAmount(double amount) {
+    public Transaction setAmount(double amount) {
         this.amount.set(amount);
+        return this;
     }
 
-    public void setTag(String tag) {
+    public Transaction setTag(String tag) {
         this.tag.set(tag);
+        return this;
     }
 
     public String toString() {

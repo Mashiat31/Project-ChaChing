@@ -164,17 +164,22 @@ public class Controller implements Initializable {
         return dialog;
     }
 
-    private Optional<Transaction> editTransation(Transaction existingTransaction) {
+    private Transaction getValueFromTransactionDialog(TextField amountTextField, TextField tagTextField, RadioButton expenseRadioButton) {
+        double amount = Double.parseDouble(amountTextField.getText());
+        Transaction.TransactionType type
+                = expenseRadioButton.isSelected()
+                ? Transaction.TransactionType.EXPENSE : Transaction.TransactionType.INCOME;
+        return new Transaction(amount, type, tagTextField.getText());
+    }
+
+    private Optional<Transaction> editTransaction(Transaction existingTransaction) {
+        ToggleGroup radioGroup = new ToggleGroup();
         RadioButton expenseRadioButton = new RadioButton("Expense");
         RadioButton incomeRadioButton = new RadioButton("Income");
-        if (existingTransaction.getType().equals("EXPENSE")) {
-            expenseRadioButton.setSelected(true);
-        } else {
-            incomeRadioButton.setSelected(true);
-        }
-        ToggleGroup radioGroup = new ToggleGroup();
         expenseRadioButton.setToggleGroup(radioGroup);
         incomeRadioButton.setToggleGroup(radioGroup);
+        expenseRadioButton.setSelected(existingTransaction.getType().equals("EXPENSE"));
+        incomeRadioButton.setSelected(existingTransaction.getType().equals("INCOME"));
         VBox optionsFormField = new VBox(8, new Label("Type:"), new HBox(8, expenseRadioButton, incomeRadioButton));
         TextField amountTextField = new TextField(String.format("%.2f", existingTransaction.getNetAmount()));
         HBox amountFormField = new HBox(8, new Label("Amount:"), amountTextField);
@@ -185,11 +190,7 @@ public class Controller implements Initializable {
                 "Update details for your transaction", optionsFormField, amountFormField, tagFormField);
         dialog.setResultConverter((ButtonType button) -> {
             if (button == ButtonType.OK) {
-                double amount = Double.parseDouble(amountTextField.getText());
-                Transaction.TransactionType type
-                        = expenseRadioButton.isSelected()
-                        ? Transaction.TransactionType.EXPENSE : Transaction.TransactionType.INCOME;
-                return new Transaction(amount, type, tagTextField.getText());
+                return getValueFromTransactionDialog(amountTextField, tagTextField, expenseRadioButton);
             }
             return null;
         });
@@ -198,10 +199,10 @@ public class Controller implements Initializable {
 
     @FXML
     private void addTransaction() {
+        ToggleGroup radioGroup = new ToggleGroup();
         RadioButton expenseRadioButton = new RadioButton("Expense");
         RadioButton incomeRadioButton = new RadioButton("Income");
         expenseRadioButton.setSelected(true);
-        ToggleGroup radioGroup = new ToggleGroup();
         expenseRadioButton.setToggleGroup(radioGroup);
         incomeRadioButton.setToggleGroup(radioGroup);
         VBox optionsFormField = new VBox(8, new Label("Type:"), new HBox(8, expenseRadioButton, incomeRadioButton));
@@ -213,15 +214,11 @@ public class Controller implements Initializable {
                 "Enter details for your new transaction", optionsFormField, amountFormField, tagFormField);
         dialog.setResultConverter((ButtonType button) -> {
             if (button == ButtonType.OK) {
-                double amount = Double.parseDouble(amountTextField.getText());
-                Transaction.TransactionType type = expenseRadioButton.isSelected()
-                        ? Transaction.TransactionType.EXPENSE : Transaction.TransactionType.INCOME;
-                return new Transaction(amount, type, tagTextField.getText());
+                return getValueFromTransactionDialog(amountTextField, tagTextField, expenseRadioButton);
             }
             return null;
         });
-        Optional<Transaction> optionalTransaction = dialog.showAndWait();
-        optionalTransaction.ifPresent((Transaction transaction) -> {
+        dialog.showAndWait().ifPresent((Transaction transaction) -> {
             this.currentAccount.addTransaction(transaction);
         });
     }
@@ -289,7 +286,6 @@ public class Controller implements Initializable {
     }
 
     private void setupTransactionTableView() {
-        transactionTable.setEditable(true);
         transactionTable.setRowFactory(tableView -> {
             final TableRow<Transaction> row = new TableRow<>();
             final ContextMenu menu = new ContextMenu();
@@ -299,11 +295,8 @@ public class Controller implements Initializable {
                 transactionTable.getItems().remove(row.getItem());
             });
             editItem.setOnAction(e -> {
-                Optional<Transaction> optionalTransaction = editTransation(row.getItem());
-                optionalTransaction.ifPresent((Transaction transaction) -> {
-                    row.getItem().setAmount(transaction.getNetAmount());
-                    row.getItem().setTag(transaction.getTag());
-                    row.getItem().setType(Transaction.TransactionType.valueOf(transaction.getType()));
+                editTransaction(row.getItem()).ifPresent((Transaction transaction) -> {
+                    row.getItem().setAmount(transaction.getNetAmount()).setTag(transaction.getTag()).setType(Transaction.TransactionType.valueOf(transaction.getType()));
                     tableView.refresh();
                 });
             });
@@ -314,7 +307,6 @@ public class Controller implements Initializable {
                             .otherwise((ContextMenu)null));
             return row;
         });
-
     }
 
     private void setDefaultButtonStates() {
