@@ -12,11 +12,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
-
+// Represents the console version of the application
 public class ChaChing {
 
     private ObservableList<Account> accounts;
-
+    // EFFECTS: Start the application and defines menu choice's function of execution
     public static void main(String[] args) throws IOException {
         ChaChing app = new ChaChing();
         Scanner menuChoice = new Scanner(System.in);
@@ -43,14 +43,15 @@ public class ChaChing {
         }
     }
 
+    // EFFECTS: Instantiate the console application with an empty list of accounts
     public ChaChing() {
         this.accounts = FXCollections.observableArrayList();
     }
-
+    // EFFECTS: Returns all accounts
     public ObservableList<Account> getAccounts() {
         return this.accounts;
     }
-
+    // EFFECTS: Prints application's menu
     public static void displayMenu() {
         System.out.println("===== ChaChing: Personal Finance Manager ====");
         System.out.println("1. Create new account");
@@ -60,7 +61,7 @@ public class ChaChing {
         System.out.println("5. Save to file");
         System.out.println("6. Exit");
     }
-
+    // EFFECTS: Prints instructional text and take user input to create account and add to application account list
     public void createAccount() {
         Scanner prompt = new Scanner(System.in);
         System.out.println("===== ChaChing: Create account ====");
@@ -76,7 +77,8 @@ public class ChaChing {
         System.out.println(String.format("Current balance: %f", account.getSurplus()));
         System.out.println(">>>>> Returning to main menu <<<<<\n");
     }
-
+    // EFFECTS: Prints instructional text to prompt for path user input and add
+    // deserialized account(s) to account list
     public void loadAccounts() throws FileNotFoundException {
         Scanner prompt = new Scanner(System.in);
         System.out.println("> Please enter the path your file is located:");
@@ -92,7 +94,7 @@ public class ChaChing {
         }
         this.accounts.addAll(operator.load());
     }
-
+    // EFFECTS: Prints instructional text to ask for path to save file to and write serialized result to disk
     public void saveAccounts() throws IOException {
         Scanner prompt = new Scanner(System.in);
         System.out.println("> Please enter the path your file is located:");
@@ -105,7 +107,7 @@ public class ChaChing {
         System.out.println("***** Account details has been successfully written into file *****\n");
         operator.save(this.accounts);
     }
-
+    // EFFECTS: Get each account's string representation of its summary and print it out
     public void showAccounts() {
         System.out.println("===== ChaChing: View accounts ====");
         for (Account account: this.accounts) {
@@ -113,7 +115,8 @@ public class ChaChing {
         }
         System.out.println(">>>>> Returning to main menu <<<<<");
     }
-
+    // EFFECTS: Prints instructional text to prompt for user input to create a
+    // new transaction and add it to a particular account in the list
     public void addTransaction() {
         Scanner prompt = new Scanner(System.in);
         System.out.println("===== ChaChing: Add Transaction ====");

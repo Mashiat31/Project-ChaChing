@@ -13,15 +13,19 @@ import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+// Unit tests for the FileOperator class
 public class FileOperatorTest {
 
     FileOperator operator;
 
+    // EFFECTS: initialize an instance of FileOperator before each test with test file path
     @BeforeEach
     public void runBefore() {
         operator = new FileOperator("./data/loadtest.csv");
     }
 
+    // EFFECTS: test load() by comparing values in assertion to show that values of accounts and its transactions
+    // come out of deserialization matches the test file
     @Test
     public void testLoad() {
         try {
@@ -34,6 +38,7 @@ public class FileOperatorTest {
         }
     }
 
+    // EFFECTS: test whether exception will be triggered if a non existing path is set
     @Test
     public void testLoadFail() {
         assertThrows(FileNotFoundException.class, () -> {
@@ -42,6 +47,8 @@ public class FileOperatorTest {
         });
     }
 
+    // EFFECTS: test save() by creating a new account with a transaction and serialize it and save it to disk
+    // check in assertion to see whether read value from file saved previously matched expected string
     @Test
     public void testSave() {
         try {

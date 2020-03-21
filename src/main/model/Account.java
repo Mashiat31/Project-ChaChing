@@ -8,56 +8,57 @@ import persistence.Saveable;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Account implements Saveable<Account> {
+// Represents a checking account, contains a list of transaction records, a budget and and description
 
+public class Account implements Saveable<Account> {
 
     private StringProperty description;
     private ListProperty<Transaction> transactions;
     private DoubleProperty budget;
 
+    // EFFECTS: Each account begins with an empty list of transactions, and has given a budget and description
     public Account(String description, double budget) {
         ObservableList<Transaction> observableList = FXCollections.observableArrayList();
         this.transactions = new SimpleListProperty<>(observableList);
         this.description = new SimpleStringProperty(description);
         this.budget = new SimpleDoubleProperty(budget);
     }
-
+    // EFFECTS: Dummy constructor for implementing to Saveable interface
     public Account() {}
-
+    // EFFECTS: Returns set budget of an account
     public double getBudget() {
         return budget.get();
     }
-
+    // EFFECTS: Returns DoubleProperty version of primitive type variable budget for gui implementation
     public DoubleProperty budgetProperty() {
         return budget;
     }
-
+    // EFFECTS: Returns description of an account
     public String getDescription() {
         return description.get();
     }
-
+    // EFFECTS: Accept modification to description of an account
     public void setDescription(String description) {
         this.description.set(description);
     }
-
+    // EFFECTS: Returns StringProperty version of String type variable description for gui implementation
     public StringProperty descriptionProperty() {
         return description;
     }
-
+    // EFFECTS: Accept modification to the budget of an account
     public void setBudget(double budget) {
         this.budget.set(budget);
     }
-
+    // EFFECTS: Returns whether the user of the account has exceeded the account's imposed budget limit
     public boolean isOverBudgetLimit() {
         return this.getBudget() + getTotalByTransactionType(Transaction.TransactionType.EXPENSE) < 0;
     }
-
+    // EFFECTS: Returns the overall sum of all transaction activity
     public double getSurplus() {
         return this.getBudget() + getTotalByTransactionType(Transaction.TransactionType.EXPENSE)
                 + getTotalByTransactionType(Transaction.TransactionType.INCOME);
     }
-
-
+    // EFFECTS: Returns a set of tags from recorded transactions
     public ArrayList<String> getTransactionTags(String transactionType) {
         ArrayList<String> tags = new ArrayList<>();
         for (Transaction transaction: this.transactions.get()) {
@@ -67,25 +68,25 @@ public class Account implements Saveable<Account> {
         }
         return tags;
     }
-
+    // EFFECTS: Returns all recorded transactions
     public ObservableList<Transaction> getTransactions() {
         return transactions.get();
     }
-
+    // EFFECTS: Add a new transaction to existing account's list of transactions
     public void addTransaction(Transaction transaction) {
         this.transactions.add(transaction);
     }
-
+    // EFFECTS: Update a particular transaction in the list by its index
     public void updateTransaction(int index, double amount, String tag) {
         Transaction transaction = this.transactions.get(index);
         transaction.setAmount(amount);
         transaction.setTag(tag);
     }
-
+    // EFFECTS: Remove a particular transaction in the list by its index
     public void removeTransaction(int index) {
         this.transactions.remove(index);
     }
-
+    // EFFECTS: Retrieve a subset of transactions by querying a certain tag
     public ArrayList<Transaction> getTransactionsByTags(String tag) {
         ArrayList<Transaction> taggedTransactions = new ArrayList<>();
         for (Transaction transaction : this.transactions) {
@@ -95,7 +96,7 @@ public class Account implements Saveable<Account> {
         }
         return taggedTransactions;
     }
-
+    // EFFECTS: Returns transactions either by INCOME or EXPENSE
     public double getTotalByTransactionType(Transaction.TransactionType type) {
         double total = 0;
         for (Transaction transaction : this.transactions) {
@@ -111,7 +112,7 @@ public class Account implements Saveable<Account> {
         }
         return total;
     }
-
+    // EFFECTS: Returns a String representation of the overall summary of an account
     public String toString() {
         String title = "===== Account Summary =====\n";
         String income = "***** INCOME *****\n";
@@ -129,7 +130,7 @@ public class Account implements Saveable<Account> {
         String budget = String.format("* Budget: %.2f *\n", this.budget.get());
         return title.concat(budget).concat(income).concat(expense);
     }
-
+    // EFFECTS: Takes all of its stored transaction and account info from variables to parsable text for saving to file
     @Override
     public String serialize() {
         StringBuilder result = new StringBuilder();
@@ -140,7 +141,7 @@ public class Account implements Saveable<Account> {
         }
         return result.toString();
     }
-
+    // EFFECTS: Retrieve and parse saved text and transform them back into variables hence initializing an Account object
     @Override
     public void deserialize(Scanner scanner) {
         String line = scanner.nextLine();
