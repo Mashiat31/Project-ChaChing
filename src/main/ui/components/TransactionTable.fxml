@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+
+<fx:root xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" type="javafx.scene.control.TableView" layoutY="105.0" prefHeight="293.0" prefWidth="472.0">
+    <columns>
+        <TableColumn fx:id="transactionTypeColumn" prefWidth="75.0" text="Type" />
+        <TableColumn fx:id="transactionAmountColumn" prefWidth="123.0" text="Amount" />
+        <TableColumn fx:id="transactionTagColumn" prefWidth="225.0" text="Tag" />
+    </columns>
+</fx:root>

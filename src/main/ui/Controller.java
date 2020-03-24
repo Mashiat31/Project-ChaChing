@@ -11,9 +11,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Side;
 import javafx.scene.Node;
-import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
@@ -25,6 +23,8 @@ import javafx.util.Callback;
 import model.Account;
 import model.Transaction;
 import persistence.FileOperator;
+import ui.components.ExpenseDistributionView;
+import ui.components.TransactionTableView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -54,16 +54,7 @@ public class Controller implements Initializable {
     private MenuItem saveAsMenuButton;
 
     @FXML
-    private TableColumn<Transaction, String> transactionTypeColumn;
-
-    @FXML
-    private TableColumn<Transaction, String> transactionAmountColumn;
-
-    @FXML
-    private TableColumn<Transaction, String> transactionTagColumn;
-
-    @FXML
-    private TableView<Transaction> transactionTable;
+    private TransactionTableView transactionTable;
 
     @FXML
     private Text balanceLabel;
@@ -176,7 +167,7 @@ public class Controller implements Initializable {
     }
     // EFFECTS: Display input dialog with filled input from previously stored transaction and update
     // with changes
-    private Optional<Transaction> editTransaction(Transaction existingTransaction) {
+    public Optional<Transaction> editTransaction(Transaction existingTransaction) {
         ToggleGroup radioGroup = new ToggleGroup();
         RadioButton expenseRadioButton = new RadioButton("Expense");
         RadioButton incomeRadioButton = new RadioButton("Income");
@@ -229,23 +220,9 @@ public class Controller implements Initializable {
     }
     // EFFECTS: Gather all expense transactions and create a pie chart from it and display it
     @FXML
-    private void showPieChart() {
-        PieChart pieChart = new PieChart();
-        for (String tag: currentAccount.getTransactionTags("EXPENSE")) {
-            double expenseTotal = 0;
-            for (Transaction transaction: currentAccount.getTransactionsByTags(tag)) {
-                expenseTotal += transaction.getNetAmount();
-            }
-            PieChart.Data slice = new PieChart.Data(tag, expenseTotal);
-            pieChart.getData().add(slice);
-        }
-        pieChart.setLegendSide(Side.LEFT);
-        Dialog dialog = new Dialog();
-        dialog.setTitle("Expense Overview");
-        DialogPane dialogPane = dialog.getDialogPane();
-        dialogPane.getButtonTypes().addAll(ButtonType.OK);
-        dialogPane.setContent(new VBox(8, pieChart));
-        dialog.show();
+    private void showExpenseDistribution() {
+        ExpenseDistributionView distribution = new ExpenseDistributionView(currentAccount);
+        distribution.show();
     }
     // EFFECTS: Handles accounts update in list view and respond to item selection in list view
     private void setupAccountListViewEventListeners() {
@@ -277,43 +254,7 @@ public class Controller implements Initializable {
         addTransactionMenuButton.setDisable(false);
         chartButton.setDisable(false);
     }
-    // EFFECTS: Transform transaction data into table view displayable variables
-    private void sanitizeTableColumnsDisplayValue() {
-        transactionTypeColumn.setCellValueFactory(
-                transactionStringCellDataFeatures
-                    -> new SimpleStringProperty(transactionStringCellDataFeatures.getValue().getType())
-        );
-        transactionAmountColumn.setCellValueFactory(
-                new PropertyValueFactory<Transaction, String>("amount")
-        );
-        transactionTagColumn.setCellValueFactory(
-                new PropertyValueFactory<Transaction, String>("tag")
-        );
-    }
-    // EFFECTS: Set up table view's right click context menu and its click event handler
-    private void setupTransactionTableView() {
-        transactionTable.setRowFactory(tableView -> {
-            final TableRow<Transaction> row = new TableRow<>();
-            final ContextMenu menu = new ContextMenu();
-            MenuItem editItem = new MenuItem("Edit");
-            MenuItem removeItem = new MenuItem("Remove");
-            removeItem.setOnAction(e -> {
-                transactionTable.getItems().remove(row.getItem());
-            });
-            editItem.setOnAction(e -> {
-                editTransaction(row.getItem()).ifPresent((Transaction transaction) -> {
-                    row.getItem().setAmount(transaction.getNetAmount()).setTag(transaction.getTag()).setType(Transaction.TransactionType.valueOf(transaction.getType()));
-                    tableView.refresh();
-                });
-            });
-            menu.getItems().addAll(editItem,removeItem);
-            row.contextMenuProperty().bind(
-                    Bindings.when(Bindings.isNotNull(row.itemProperty()))
-                            .then(menu)
-                            .otherwise((ContextMenu)null));
-            return row;
-        });
-    }
+
     // EFFECTS: Set default state to buttons when there is no data to act on
     private void setDefaultButtonStates() {
         addTransactionMenuButton.setDisable(true);
@@ -327,8 +268,7 @@ public class Controller implements Initializable {
         setDefaultButtonStates();
         setupAccountListViewEventListeners();
         accountListView.setItems(accounts);
-        setupTransactionTableView();
-        sanitizeTableColumnsDisplayValue();
+        this.transactionTable.setController(this);
     }
     // EFFECTS: Handles quit menu button click and proceed to exit the application
     @FXML

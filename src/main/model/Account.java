@@ -6,6 +6,8 @@ import javafx.collections.ObservableList;
 import persistence.Saveable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 // Represents a checking account, contains a list of transaction records, a budget and and description
@@ -96,6 +98,19 @@ public class Account implements Saveable<Account> {
         }
         return taggedTransactions;
     }
+
+    public Map<String, Double> getTaggedTransactionSumPair(String transactionType) {
+        Map<String, Double> sumPair = new HashMap<>();
+        for (String tag: this.getTransactionTags(transactionType)) {
+            double total = 0;
+            for (Transaction transaction: this.getTransactionsByTags(tag)) {
+                total += transaction.getNetAmount();
+            }
+            sumPair.put(tag, total);
+        }
+        return sumPair;
+    }
+
     // EFFECTS: Returns transactions either by INCOME or EXPENSE
     public double getTotalByTransactionType(Transaction.TransactionType type) {
         double total = 0;

@@ -13,6 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
+<?import ui.components.TransactionTableView?>
 <VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Controller">
   <children>
     <MenuBar VBox.vgrow="NEVER">
@@ -48,14 +49,8 @@
                         <Text fx:id="balanceLabel" layoutX="25.0" layoutY="33.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Balance" />
                         <Text fx:id="budgetLabel" layoutX="141.0" layoutY="33.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Budget" />
                         <Button fx:id="addTransactionMenuButton" layoutX="301.0" layoutY="15.0" mnemonicParsing="false" onAction="#addTransaction" text="Add Transaction" />
-                        <TableView fx:id="transactionTable" layoutY="105.0" prefHeight="293.0" prefWidth="472.0">
-                          <columns>
-                            <TableColumn fx:id="transactionTypeColumn" prefWidth="75.0" text="Type" />
-                            <TableColumn fx:id="transactionAmountColumn" prefWidth="123.0" text="Amount" />
-                            <TableColumn fx:id="transactionTagColumn" prefWidth="225.0" text="Tag" />
-                          </columns>
-                        </TableView>
-                        <Button layoutX="302.0" layoutY="66.0" mnemonicParsing="false" text="View in PieChart" fx:id="chartButton" onAction="#showPieChart" />
+                        <TransactionTableView fx:id="transactionTable"/>
+                        <Button layoutX="302.0" layoutY="66.0" mnemonicParsing="false" text="View in PieChart" fx:id="chartButton" onAction="#showExpenseDistribution" />
                      </children>
                   </AnchorPane>
               </items>
