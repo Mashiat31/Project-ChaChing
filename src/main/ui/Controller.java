@@ -23,7 +23,9 @@ import javafx.util.Callback;
 import model.Account;
 import model.Transaction;
 import persistence.FileOperator;
+import ui.components.AccountDialog;
 import ui.components.ExpenseDistributionView;
+import ui.components.TransactionDialog;
 import ui.components.TransactionTableView;
 
 import java.io.File;
@@ -52,6 +54,9 @@ public class Controller implements Initializable {
 
     @FXML
     private MenuItem saveAsMenuButton;
+
+    @FXML
+    private MenuItem editAccountMenuButton;
 
     @FXML
     private TransactionTableView transactionTable;
@@ -123,97 +128,35 @@ public class Controller implements Initializable {
     // account to the account list
     @FXML
     private void addAccount() {
-        Dialog<Account> dialog = new Dialog<>();
-        dialog.setTitle("New Account");
-        dialog.setHeaderText("Enter details for your account information");
-        DialogPane dialogPane = dialog.getDialogPane();
-        dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-        TextField accountNameTextField = new TextField();
-        Label accountNameLabel = new Label("Account Name:");
-        HBox accountNameFormField = new HBox(8, accountNameLabel, accountNameTextField);
-        TextField budgetTextField = new TextField();
-        Label budgetNameLabel = new Label("Budget:");
-        HBox budgetFormField = new HBox(8, budgetNameLabel, budgetTextField);
-        dialogPane.setContent(new VBox(8, accountNameFormField, budgetFormField));
-        Platform.runLater(accountNameTextField::requestFocus);
-        dialog.setResultConverter((ButtonType button) -> {
-            if (button == ButtonType.OK) {
-                return new Account(accountNameTextField.getText(), Double.parseDouble(budgetTextField.getText()));
-            }
-            return null;
-        });
+        AccountDialog dialog = new AccountDialog();
         Optional<Account> optionalAccount = dialog.showAndWait();
         optionalAccount.ifPresent((Account account) -> {
             this.accounts.add(account);
         });
     }
-    // EFFECTS: Returns a skeleton object for dialog view
-    private Dialog createDialogView(String title, String headerText, Node...nodes) {
-        Dialog dialog = new Dialog<>();
-        dialog.setTitle(title);
-        dialog.setHeaderText(headerText);
-        DialogPane dialogPane = dialog.getDialogPane();
-        dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-        dialogPane.setContent(new VBox(8, nodes));
-        return dialog;
+
+    // EFFECTS: Display input dialog to allow user to edit their previously saved account information
+    @FXML
+    private void editAccount() {
+        AccountDialog dialog = new AccountDialog(currentAccount);
+        Optional<Account> optionalAccount = dialog.showAndWait();
+        optionalAccount.ifPresent((Account account) -> {
+            currentAccount.setDescription(account.getDescription());
+            currentAccount.setBudget(account.getBudget());
+        });
     }
-    // EFFECTS: Extract values from dialog text fields
-    private Transaction getValueFromTransactionDialog(TextField amountTextField, TextField tagTextField, RadioButton expenseRadioButton) {
-        double amount = Double.parseDouble(amountTextField.getText());
-        Transaction.TransactionType type
-                = expenseRadioButton.isSelected()
-                ? Transaction.TransactionType.EXPENSE : Transaction.TransactionType.INCOME;
-        return new Transaction(amount, type, tagTextField.getText());
-    }
+
     // EFFECTS: Display input dialog with filled input from previously stored transaction and update
     // with changes
     public Optional<Transaction> editTransaction(Transaction existingTransaction) {
-        ToggleGroup radioGroup = new ToggleGroup();
-        RadioButton expenseRadioButton = new RadioButton("Expense");
-        RadioButton incomeRadioButton = new RadioButton("Income");
-        expenseRadioButton.setToggleGroup(radioGroup);
-        incomeRadioButton.setToggleGroup(radioGroup);
-        expenseRadioButton.setSelected(existingTransaction.getType().equals("EXPENSE"));
-        incomeRadioButton.setSelected(existingTransaction.getType().equals("INCOME"));
-        VBox optionsFormField = new VBox(8, new Label("Type:"), new HBox(8, expenseRadioButton, incomeRadioButton));
-        TextField amountTextField = new TextField(String.format("%.2f", existingTransaction.getNetAmount()));
-        HBox amountFormField = new HBox(8, new Label("Amount:"), amountTextField);
-        TextField tagTextField = new TextField(existingTransaction.getTag());
-        HBox tagFormField = new HBox(8, new Label("Tag:"), tagTextField);
-        Dialog<Transaction> dialog
-                = createDialogView("Edit Transaction",
-                "Update details for your transaction", optionsFormField, amountFormField, tagFormField);
-        dialog.setResultConverter((ButtonType button) -> {
-            if (button == ButtonType.OK) {
-                return getValueFromTransactionDialog(amountTextField, tagTextField, expenseRadioButton);
-            }
-            return null;
-        });
+        TransactionDialog dialog = new TransactionDialog(existingTransaction);
         return dialog.showAndWait();
     }
     // EFFECTS: Display input dialog for user to input transaction creation details and add
     // newly created transaction to the viewing account's transaction list
     @FXML
     private void addTransaction() {
-        ToggleGroup radioGroup = new ToggleGroup();
-        RadioButton expenseRadioButton = new RadioButton("Expense");
-        RadioButton incomeRadioButton = new RadioButton("Income");
-        expenseRadioButton.setSelected(true);
-        expenseRadioButton.setToggleGroup(radioGroup);
-        incomeRadioButton.setToggleGroup(radioGroup);
-        VBox optionsFormField = new VBox(8, new Label("Type:"), new HBox(8, expenseRadioButton, incomeRadioButton));
-        TextField amountTextField = new TextField();
-        HBox amountFormField = new HBox(8, new Label("Amount:"), amountTextField);
-        TextField tagTextField = new TextField();
-        HBox tagFormField = new HBox(8, new Label("Tag:"), tagTextField);
-        Dialog<Transaction> dialog = createDialogView("New Transaction",
-                "Enter details for your new transaction", optionsFormField, amountFormField, tagFormField);
-        dialog.setResultConverter((ButtonType button) -> {
-            if (button == ButtonType.OK) {
-                return getValueFromTransactionDialog(amountTextField, tagTextField, expenseRadioButton);
-            }
-            return null;
-        });
+        TransactionDialog dialog = new TransactionDialog();
         dialog.showAndWait().ifPresent((Transaction transaction) -> {
             this.currentAccount.addTransaction(transaction);
         });
@@ -241,6 +184,7 @@ public class Controller implements Initializable {
             @Override
             public void changed(ObservableValue<? extends Account> observable, Account oldValue, Account newValue) {
                 currentAccount = accounts.get(accountListView.getSelectionModel().getSelectedIndices().get(0));
+                editAccountMenuButton.setDisable(false);
                 contextualizeAccountView();
             }
         });
@@ -260,6 +204,7 @@ public class Controller implements Initializable {
         addTransactionMenuButton.setDisable(true);
         saveMenuButton.setDisable(true);
         saveAsMenuButton.setDisable(true);
+        editAccountMenuButton.setDisable(true);
         chartButton.setDisable(true);
     }
     // EFFECTS: Override default implementation and calls above view setup functions
