@@ -99,8 +99,12 @@ of my transaction with one or more tags.
 
 ### Description of major changes after refactoring:
 
-- By creating a new generic class (`ChaChingDialog`) that extends from `Dialog`, this allows for two new subclasses (`TransactionDialog` & `AccountDialog`) to be created for taking off much of the responsiblities in `Controller` for prompting user with dialog to gather inputs
+- By creating a new abstract class (`ChaChingDialog`) that extends from `Dialog`, this allows for two new subclasses (`TransactionDialog` & `AccountDialog`) to be created for taking off much of the responsiblities in `Controller` for prompting user with dialog to gather inputs
 
 - By taking out the TableView mark up of ui from `ui/ui.fxml` and create its own individual mark up in a separate file `TransactionTable.fxml` hence implementing its class as a custom view control `ui/TransactionTableView.java`, gathering all the listeners and event handler in one single class. Centralizing table view related implementation in its own class hence decouple it from `Controller`
 
 - Added `ExpenseDistributionView` class to handle the display of visual component PieChart, hence decoupling `Controller` from having to instantiate yet another ad hoc dialog and be responsible for populating the pie chart data. 
+
+### UML Design Diagram
+
+![UML Design Diagram](https://github.students.cs.ubc.ca/cpsc210-2019w-t2/project_a1g3b/raw/master/UML_Design_Diagram.png)
