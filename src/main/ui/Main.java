@@ -23,6 +23,7 @@ public class Main extends Application {
         initRootLayout();
     }
     // EFFECTS: Load fxml file resource and setup new scene and controller responsible for responding to UI actions
+
     public void initRootLayout() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("ui.fxml"));
         Parent root = loader.load();
@@ -34,6 +35,7 @@ public class Main extends Application {
         mainStage.show();
     }
     // EFFECTS: Start the application
+
     public static void main(String[] args)  {
         launch(args);
     }
