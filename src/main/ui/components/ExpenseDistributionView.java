@@ -26,6 +26,7 @@ public class ExpenseDistributionView extends Dialog<PieChart> {
     }
     // EFFECTS: Populate the data from getting Map<String, Double> from account and
     // transform into pie chart data for plotting
+
     public void populateData() {
         for (Map.Entry<String, Double> entry: account.getTaggedTransactionSumPair("EXPENSE").entrySet()) {
             PieChart.Data slice = new PieChart.Data(entry.getKey(), entry.getValue());

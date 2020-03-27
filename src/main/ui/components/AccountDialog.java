@@ -19,6 +19,7 @@ public class AccountDialog extends ChaChingDialog<Account> {
         this.createInputControls();
     }
     // EFFECTS: Constructor to instantiate new account dialog for editing a given account
+
     public AccountDialog(Account account) {
         this.setTitle("Edit Account");
         this.setHeaderText("Update your account information");
@@ -54,7 +55,7 @@ public class AccountDialog extends ChaChingDialog<Account> {
     @Override
     public void validateUserInput() throws DialogInputException {
         try {
-            double _unused = Double.parseDouble(budgetTextField.getText());
+            double unused = Double.parseDouble(budgetTextField.getText());
         } catch (NumberFormatException exception) {
             throw new DialogInputException("Validation Error", "Budget field contains invalid character(s)");
         }

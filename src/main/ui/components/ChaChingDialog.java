@@ -13,7 +13,7 @@ import model.DialogInputException;
 public abstract class ChaChingDialog<T> extends Dialog<T> {
 
     // EFFECTS: instantiate dialog with buttons common to the subclass and setup exception handler
-    public ChaChingDialog () {
+    public ChaChingDialog() {
         this.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         this.setupInputExceptionHandler();
     }
@@ -33,7 +33,9 @@ public abstract class ChaChingDialog<T> extends Dialog<T> {
                 showErrorDialog(exception.getErrorType(), exception.getErrorMessage());
             }
         });
-    };
+    }
+
+    ;
 
     public abstract T parseValuesFromDialogResult();
 

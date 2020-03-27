@@ -40,7 +40,7 @@ public class TransactionDialog extends ChaChingDialog<Transaction> {
     @Override
     public void validateUserInput() throws DialogInputException {
         try {
-            double _unused = Double.parseDouble(amountTextField.getText());
+            double unused = Double.parseDouble(amountTextField.getText());
         } catch (NumberFormatException exception) {
             throw new DialogInputException("Validation Error", "Amount field contains invalid character(s)");
         }

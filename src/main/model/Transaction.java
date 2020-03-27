@@ -27,39 +27,49 @@ public class Transaction implements Saveable<Transaction> {
         this.tag = new SimpleStringProperty(tag);
     }
     // EFFECTS: Dummy constructor for implementing Saveable interface
+
     public Transaction() {}
     // EFFECTS: Returns the amount of the transaction, use negative to encapsulate the type being expense
+
     public double getAmount() {
         return this.type.get() == TransactionType.INCOME ? this.amount.get() : - this.amount.get();
     }
     // EFFECTS: Returns the net amount of the transaction
+
     public double getNetAmount() {
         return this.amount.get();
     }
     // EFFECTS: Returns the tagged String of the transaction
+
     public String getTag() {
         return this.tag.get();
     }
     // EFFECTS: Returns the String representation of the enum type
+
+
     public String getType() {
         return type.get().toString();
     }
     // EFFECTS: Accept modification to the transaction type
+
     public Transaction setType(TransactionType type) {
         this.type.set(type);
         return this;
     }
     // EFFECTS: Accept modification to the amount transacted
+
     public Transaction setAmount(double amount) {
         this.amount.set(amount);
         return this;
     }
     // EFFECTS: Accept modification to the tag of the transaction
+
     public Transaction setTag(String tag) {
         this.tag.set(tag);
         return this;
     }
     // EFFECTS: Returns a String representation of the transaction summary
+
     public String toString() {
         return String.format("%s: %.2f\n",this.getTag(), this.getNetAmount());
     }
@@ -70,6 +80,7 @@ public class Transaction implements Saveable<Transaction> {
         return String.format("%s,%s,%.2f\n", this.getTag(),this.type.get().toString(), this.getNetAmount());
     }
     // Retrieve and parse saved text and transform them back into variables hence initializing a Transaction object
+
     @Override
     public void deserialize(Scanner scanner) {
         String line = scanner.nextLine();

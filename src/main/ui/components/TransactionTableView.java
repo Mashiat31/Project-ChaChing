@@ -74,6 +74,7 @@ public class TransactionTableView extends TableView<Transaction> {
         });
     }
     // EFFECTS: Set a reference to controller object for button action's callback
+
     public void setController(Controller controller) {
         this.controller = controller;
     }

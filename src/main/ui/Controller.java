@@ -71,6 +71,7 @@ public class Controller implements Initializable {
     private Button chartButton;
     // EFFECTS: Instantiate the application state with an empty list of accounts,
     // add an observer to enable Save As button when more than one account is detected in the list
+
     public Controller() {
         this.operator = new FileOperator();
         this.accounts = FXCollections.observableArrayList(
@@ -93,6 +94,7 @@ public class Controller implements Initializable {
         });
     }
     // EFFECTS: Display file browser in a dialog and load accounts from file by deserializing it
+
     @FXML
     private void openFile() throws FileNotFoundException {
         FileChooser fileChooser = new FileChooser();
@@ -109,11 +111,13 @@ public class Controller implements Initializable {
         }
     }
     // EFFECTS: Save current accounts data to predefined path
+
     @FXML
     private void saveFile() throws IOException {
         operator.save(this.accounts);
     }
     // EFFECTS: Display file browser for user to choose an alternative file path for saving accounts data
+
     @FXML
     private void saveFileAs() throws IOException {
         FileChooser fileChooser = new FileChooser();
@@ -126,6 +130,7 @@ public class Controller implements Initializable {
     }
     // EFFECTS: Display input dialog to gather account creation details from user to add newly created
     // account to the account list
+
     @FXML
     private void addAccount() {
         AccountDialog dialog = new AccountDialog();
@@ -154,6 +159,7 @@ public class Controller implements Initializable {
     }
     // EFFECTS: Display input dialog for user to input transaction creation details and add
     // newly created transaction to the viewing account's transaction list
+
     @FXML
     private void addTransaction() {
         TransactionDialog dialog = new TransactionDialog();
@@ -162,12 +168,14 @@ public class Controller implements Initializable {
         });
     }
     // EFFECTS: Gather all expense transactions and create a pie chart from it and display it
+
     @FXML
     private void showExpenseDistribution() {
         ExpenseDistributionView distribution = new ExpenseDistributionView(currentAccount);
         distribution.show();
     }
     // EFFECTS: Handles accounts update in list view and respond to item selection in list view
+
     private void setupAccountListViewEventListeners() {
         accountListView.setCellFactory(param -> new ListCell<Account>() {
             @Override
@@ -191,6 +199,7 @@ public class Controller implements Initializable {
     }
     // EFFECTS: Set default button states, initialize budget and balance text view with current account
     // variable getters and setup table view with transactions
+
     private void contextualizeAccountView() {
         budgetLabel.setText(String.format("Budget: %.2f", currentAccount.getBudget()));
         balanceLabel.setText(String.format("Balance: %.2f", currentAccount.getSurplus()));
@@ -208,6 +217,7 @@ public class Controller implements Initializable {
         chartButton.setDisable(true);
     }
     // EFFECTS: Override default implementation and calls above view setup functions
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setDefaultButtonStates();
@@ -216,12 +226,14 @@ public class Controller implements Initializable {
         this.transactionTable.setController(this);
     }
     // EFFECTS: Handles quit menu button click and proceed to exit the application
+
     @FXML
     private void quitApplication() {
         Platform.exit();
         System.exit(0);
     }
     // EFFECTS: Allows for dependency injection for various functions to execute that required application's stage
+
     public void setStage(Stage stage) {
         this.stage = stage;
     }
