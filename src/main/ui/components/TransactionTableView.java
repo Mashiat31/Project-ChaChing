@@ -28,6 +28,7 @@ public class TransactionTableView extends TableView<Transaction> {
     public EventHandler<ActionEvent> editTransactionAction;
     private Controller controller;
 
+    // EFFECTS: instantiate new table view from loading the fxml file
     public TransactionTableView() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("TransactionTable.fxml"));
         loader.setRoot(this);
@@ -72,11 +73,13 @@ public class TransactionTableView extends TableView<Transaction> {
             return row;
         });
     }
-
+    // EFFECTS: Set a reference to controller object for button action's callback
     public void setController(Controller controller) {
         this.controller = controller;
     }
 
+
+    // EFFECTS: Handles button click on context menu on transaction row right click and update transaction
     private void editTransactionAction(ActionEvent actionEvent) {
         Transaction selectedTransaction = this.getSelectionModel().getSelectedItem();
         controller.editTransaction(selectedTransaction).ifPresent((Transaction transaction) -> {
@@ -91,6 +94,7 @@ public class TransactionTableView extends TableView<Transaction> {
         });
     }
 
+    // EFFECTS: Remove selected transaction row from table
     private void removeTransactionAction(ActionEvent actionEvent) {
         this.getItems().remove(this.getSelectionModel().getSelectedItem());
     }

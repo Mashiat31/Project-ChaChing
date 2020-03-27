@@ -1,50 +1,40 @@
-<h1> A Personal Finance Management Application </h1>
+# A Personal Finance Management Application
 
-<h5>Purpose: </h5>
+##### Purpose:
 This desktop application will allow user to manage and record their personal incomes and expenses, hence enables the ability for the application to perform simple analytics and generate financial reports.
 
-<h5> Features: </h5>
+##### Features:
 
-<ul>
-<li>
-Configure separate accounts for compartmentalizing
-transactions </li>
-<li>
-Record and store transaction(s) locally </li>
-<li>
-Automate recurring bills record entry </li>
-<li>
-Relate transaction(s) with <i> context based tags  </i>
-(e.g Groceries, Medical, Leisure) </li>
-<li>
-Budget planning for selected accounts </li>
-<li>
-Generate summaries & financial reports on
- account(s) over a period of time </li>
- </ul>
+- Configure separate accounts for compartmentalizing
+transactions
 
-<h5> User Stories </h5>
+- Record and store transaction(s) locally
+- Automate recurring bills record entry
+- Relate transaction(s) with *context based tags*
+(e.g Groceries, Medical, Leisure)
+Budget planning for selected accounts
+- Generate summaries & financial reports on
+ account(s) over a period of time
 
-<ul>
+##### User Stories
 
-<li> As a user, I want to be able to create,
+- As a user, I want to be able to create,
  view, update and remove my transaction record(s)
- in a particular account. </li>
-<li> As a user, I want to be able to see balance(s)
- on one or more accounts </li>
-<li> As a user, when I press checkout, I want to be able
-to store my financial records on file. </li>
-<li> As a user, I want to be able tag each
-of my transaction with one or more tags </li>
-<li>
-As a user, I want to be able set a budget
+ in a particular account.
+- As a user, I want to be able to see balance(s)
+ on one or more accounts.
+- As a user, when I press checkout, I want to be able
+to store my financial records on file.
+- As a user, I want to be able tag each
+of my transaction with one or more tags.
+- As a user, I want to be able set a budget
  limit on one or more accounts and see
  warnings on my account when my expenditure
- is approaching my imposed limit. </li>
-<li> As a user, I want to be able to create charts
- on one or more accounts and view my monthly balance sheets graphically. </li>
-  </ul>
-  <h3>Instructions for Grader</h3>
+ is approaching my imposed limit.
+- As a user, I want to be able to create charts
+ on one or more accounts and view my monthly balance sheets graphically.
+
+### Instructions for Grader
 
   Upon compiling the program and execute it, the application's features/functionality can be evaluate by following performing following actions:
 
@@ -68,3 +58,53 @@ As a user, I want to be able set a budget
   - You can reload the state of my application by locating the menu item named File on the top of the menu bar of the application, by clicking on the menu item, a dropdown menu should appear and contains an item titled "Open".
   By clicking on it, a file browser pop-up dialog should appear and let the user locate their saved records. A handy file extension filter has been implemented to let user know only the compatible file format can be open within the application. Upon finish choosing the file specified by clicking open in the file browser, the application state will reload and refresh the user interface by showing the data being parsed from the file as Accounts and Transactions within the application.
 
+
+### Phase 4: Task 2
+
+#### Implementation for **type hierarchy**, in `ui/components/ChaChingDialog.java` 
+  ```
+    public abstract void validateUserInput() throws DialogInputException;
+  ```
+  ```
+    public abstract void createInputControls();
+  ```
+  ```
+    public abstract T parseValuesFromDialogResult();
+  ```
+  Concrete implementations
+  - `ui/components/TransactionDialog.java`
+  - `ui/components/AccountDialog.java`
+
+#### Implementation for **use of the Map interface**
+  - `ui/ExpenseDistributionView.java`
+  `public void populateData()`
+  - `model/Account.java`
+  `public Map<String, Double> getTaggedTransactionSumPair(String transactionType)`
+
+#### Implementation for **use of a bi-directional association**
+
+  - `ui/components/TransactionTableView.java`
+  `private void editTransactionAction(ActionEvent actionEvent)`
+  - `ui/Controller.java`
+  `public void initialize(URL url, ResourceBundle resourceBundle)`
+
+### Phase 4: Task 3
+
+#### Identified places with too much coupling / poor cohesion
+- `Controller` class takes up too much of the responsibility in handling UI actions with tons of adhoc ui objects creation
+- `addTransaction()` and `editTransaction` in `Controller.java` presents incohesion for the use of Dialog for similar purpose, repeated declarations of textfields and radio buttons in the controller class
+- tightly coupled logics in displaying pie chart for show expenses distribution in `showPieChart()`
+- single use of `Dialog` class in `addAccount()` and missing `editAccount()` implementation in comparison to performing `Transaction` related operations
+- Scattered listeners and event handlers in the TableView that displays`Transaction` instances in rows in `Controller` class causes poor cohesion
+
+### Description of major changes after refactoring:
+
+- By creating a new abstract class (`ChaChingDialog`) that extends from `Dialog`, this allows for two new subclasses (`TransactionDialog` & `AccountDialog`) to be created for taking off much of the responsiblities in `Controller` for prompting user with dialog to gather inputs
+
+- By taking out the TableView mark up of ui from `ui/ui.fxml` and create its own individual mark up in a separate file `TransactionTable.fxml` hence implementing its class as a custom view control `ui/TransactionTableView.java`, gathering all the listeners and event handler in one single class. Centralizing table view related implementation in its own class hence decouple it from `Controller`
+
+- Added `ExpenseDistributionView` class to handle the display of visual component PieChart, hence decoupling `Controller` from having to instantiate yet another ad hoc dialog and be responsible for populating the pie chart data. 
+
+### UML Design Diagram
+
+![UML Design Diagram](https://github.students.cs.ubc.ca/cpsc210-2019w-t2/project_a1g3b/raw/master/UML_Design_Diagram.png)
