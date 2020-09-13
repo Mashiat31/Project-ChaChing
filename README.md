@@ -105,6 +105,7 @@ of my transaction with one or more tags.
 
 - Added `ExpenseDistributionView` class to handle the display of visual component PieChart, hence decoupling `Controller` from having to instantiate yet another ad hoc dialog and be responsible for populating the pie chart data. 
 
-### UML Design Diagram
+### UML Design Diagram)
 
-![UML Design Diagram](https://github.students.cs.ubc.ca/cpsc210-2019w-t2/project_a1g3b/raw/master/UML_Design_Diagram.png)
+
+![UML Design Diagram](https://raw.githubusercontent.com/Mashiat31/Project-ChaChing/master/UML_Design_Diagram.png)
